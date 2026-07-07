@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7200506515295003093}
   - component: {fileID: 7200506515295003094}
   - component: {fileID: 7200506515295003095}
+  - component: {fileID: 740000000000000009}
   m_Layer: 0
   m_Name: Rain
   m_TagString: Untagged
@@ -4871,7 +4872,26 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
-  m_MaskInteraction: 0
+  m_MaskInteraction: 0--- !u!114 &740000000000000009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7200506515295003088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0
+
 --- !u!1 &8140398799018154458
 GameObject:
   m_ObjectHideFlags: 0
@@ -4883,6 +4903,7 @@ GameObject:
   - component: {fileID: 8140398799017854458}
   - component: {fileID: 8140398798998454458}
   - component: {fileID: 8140398798998370586}
+  - component: {fileID: 740000000000000010}
   m_Layer: 0
   m_Name: Rain
   m_TagString: Untagged
@@ -9688,7 +9709,26 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
-  m_MaskInteraction: 0
+  m_MaskInteraction: 0--- !u!114 &740000000000000010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8140398799018154458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0
+
 --- !u!1 &8140398799018154462
 GameObject:
   m_ObjectHideFlags: 0
@@ -9700,6 +9740,7 @@ GameObject:
   - component: {fileID: 8140398799017854462}
   - component: {fileID: 8140398798998454462}
   - component: {fileID: 8140398798998370590}
+  - component: {fileID: 740000000000000011}
   m_Layer: 0
   m_Name: RainSplash
   m_TagString: Untagged
@@ -14559,3 +14600,22 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &740000000000000011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8140398799018154462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4954955977169870161}
   - component: {fileID: 4269032913172269604}
   - component: {fileID: 3197314603493701246}
+  - component: {fileID: 740000000000000020}
   m_Layer: 0
   m_Name: Snow3
   m_TagString: Untagged
@@ -4753,7 +4754,26 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
-  m_MaskInteraction: 0
+  m_MaskInteraction: 0--- !u!114 &740000000000000020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1105784017855856588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0
+
 --- !u!1 &3636869012272165495
 GameObject:
   m_ObjectHideFlags: 0
@@ -4765,6 +4785,7 @@ GameObject:
   - component: {fileID: 693561903326759188}
   - component: {fileID: 2958156549574094057}
   - component: {fileID: 9098806049213842577}
+  - component: {fileID: 740000000000000021}
   m_Layer: 0
   m_Name: Snow2
   m_TagString: Untagged
@@ -9507,7 +9528,26 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
-  m_MaskInteraction: 0
+  m_MaskInteraction: 0--- !u!114 &740000000000000021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3636869012272165495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0
+
 --- !u!1 &5065179115184020121
 GameObject:
   m_ObjectHideFlags: 0
@@ -9519,6 +9559,7 @@ GameObject:
   - component: {fileID: 5073915670747572725}
   - component: {fileID: 7523976948982056749}
   - component: {fileID: 5290567361960770533}
+  - component: {fileID: 740000000000000022}
   m_Layer: 0
   m_Name: Snow6
   m_TagString: Untagged
@@ -14261,7 +14302,26 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
-  m_MaskInteraction: 0
+  m_MaskInteraction: 0--- !u!114 &740000000000000022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5065179115184020121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0
+
 --- !u!1 &5756399923473098509
 GameObject:
   m_ObjectHideFlags: 0
@@ -14273,6 +14333,7 @@ GameObject:
   - component: {fileID: 5178456176306691104}
   - component: {fileID: 8084626684486063974}
   - component: {fileID: 939844868391478128}
+  - component: {fileID: 740000000000000023}
   m_Layer: 0
   m_Name: Snow5
   m_TagString: Untagged
@@ -19015,7 +19076,26 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
-  m_MaskInteraction: 0
+  m_MaskInteraction: 0--- !u!114 &740000000000000023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5756399923473098509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0
+
 --- !u!1 &6210212669450092494
 GameObject:
   m_ObjectHideFlags: 0
@@ -19027,6 +19107,7 @@ GameObject:
   - component: {fileID: 6601195226794504158}
   - component: {fileID: 2651210787902105842}
   - component: {fileID: 1112656105611871546}
+  - component: {fileID: 740000000000000024}
   m_Layer: 0
   m_Name: Snow4
   m_TagString: Untagged
@@ -23769,7 +23850,26 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
-  m_MaskInteraction: 0
+  m_MaskInteraction: 0--- !u!114 &740000000000000024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6210212669450092494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0
+
 --- !u!1 &8409823294898916038
 GameObject:
   m_ObjectHideFlags: 0
@@ -23781,6 +23881,7 @@ GameObject:
   - component: {fileID: 8409823294898916057}
   - component: {fileID: 8409823294898916056}
   - component: {fileID: 8409823294898916039}
+  - component: {fileID: 740000000000000025}
   m_Layer: 0
   m_Name: Snow3
   m_TagString: Untagged
@@ -28529,7 +28630,26 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
-  m_MaskInteraction: 0
+  m_MaskInteraction: 0--- !u!114 &740000000000000025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8409823294898916038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0
+
 --- !u!1 &8698198422953969795
 GameObject:
   m_ObjectHideFlags: 0
@@ -28541,6 +28661,7 @@ GameObject:
   - component: {fileID: 1343521671810036275}
   - component: {fileID: 6166133670603790086}
   - component: {fileID: 6510530994379225891}
+  - component: {fileID: 740000000000000026}
   m_Layer: 0
   m_Name: Snow
   m_TagString: Untagged
@@ -33284,3 +33405,22 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &740000000000000026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8698198422953969795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0

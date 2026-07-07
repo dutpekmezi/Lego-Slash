@@ -17,8 +17,6 @@ MonoBehaviour:
   _fadeDelay: 0.05
   _fadeDuration: 0.3
   _maxRotationAngle: 45
-  _scaleIncreasePerStreak: 0.08
-  _maxScaleMultiplier: 2.5
   _moveEase: 9
   _fadeEase: 5
   _useUnscaledTime: 0

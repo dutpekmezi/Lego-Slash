@@ -10,6 +10,7 @@ namespace TrashRush.Game
         [SerializeField] private float _holdTime = 0.04f;
         [SerializeField] private float _descaleTime = 0.12f;
         [SerializeField, Min(0f)] private float _minDragWorldDistance = 1f;
+        [SerializeField, Min(0.01f)] private float _dragTime = 1f;
         [SerializeField] private bool _pulseEnabled = true;
         [SerializeField] private float _pulseScale = 1.06f;
         [SerializeField] private float _pulseTime = 0.035f;
@@ -21,7 +22,6 @@ namespace TrashRush.Game
         [SerializeField, Min(0f)] private float _decalProjectorFadeTime = 0.35f;
         [SerializeField, Min(0f)] private float _decalProjectorMinHeight = 3f;
         [SerializeField, Min(0f)] private float _decalProjectorMaxHeight = 8f;
-        [SerializeField, Min(0.01f)] private float _streakResetDelay = 1.5f;
         [Header("Background Slash")]
         [SerializeField] private bool _backgroundSlashEnabled = true;
         [SerializeField, Min(0f)] private float _backgroundSlashLifetime = 2f;
@@ -39,7 +39,8 @@ namespace TrashRush.Game
         public float ScaleTime => _scaleTime;
         public float HoldTime => _holdTime;
         public float DescaleTime => _descaleTime;
-        public float MinDragWorldDistance => _minDragWorldDistance;
+        public float MinDragWorldDistance => Mathf.Max(0f, _minDragWorldDistance);
+        public float DragTime => Mathf.Max(0.01f, _dragTime);
         public bool PulseEnabled => _pulseEnabled;
         public float PulseScale => _pulseScale;
         public float PulseTime => _pulseTime;
@@ -65,6 +66,5 @@ namespace TrashRush.Game
         public float LeafWindRadius => Mathf.Max(0f, _leafWindRadius);
         public float LeafWindVelocityImpulse => Mathf.Max(0f, _leafWindVelocityImpulse);
         public float LeafWindMaxVelocity => Mathf.Max(0f, _leafWindMaxVelocity);
-        public float StreakResetDelay => Mathf.Max(0.01f, _streakResetDelay);
     }
 }

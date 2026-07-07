@@ -10,6 +10,7 @@ namespace TrashRush.Game
         [SerializeField] private string _id;
         [SerializeField] private SlashObject _prefab;
         [SerializeField] private Texture2D _slashTexture;
+        [SerializeField] private EffectBase _hitEffect;
         [SerializeField, Min(1)] private int _totalSlash = 1;
         [Header("Fall")]
         [SerializeField, Min(0.01f)] private float _fallDuration = 9f;
@@ -25,6 +26,7 @@ namespace TrashRush.Game
         public string Id => _id;
         public SlashObject Prefab => _prefab;
         public Texture2D SlashTexture => _slashTexture;
+        public EffectBase HitEffect => _hitEffect;
         public int TotalSlash => Mathf.Max(1, _totalSlash);
         public float FallDuration => Mathf.Max(0.01f, _fallDuration);
         public Ease FallEase => _fallEase;

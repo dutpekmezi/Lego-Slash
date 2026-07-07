@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7790193415210122200}
   - component: {fileID: 1200512664196113299}
   - component: {fileID: 6866761565816365577}
+  - component: {fileID: 730000000000000005}
   m_Layer: 5
   m_Name: ConfettiEmitterParticle
   m_TagString: Untagged
@@ -4893,3 +4894,22 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &730000000000000005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8674580839386855462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0

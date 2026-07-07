@@ -15,5 +15,7 @@ MonoBehaviour:
   _viewportX: 0.5
   _spawnViewportY: 1.2
   _despawnViewportY: -0.2
-  _worldDepth: 33.4
+  _obstacleMinViewportX: 0.1
+  _obstacleMaxViewportX: 0.9
+  _obstacleMinViewportDistance: 0.2
   _useUnscaledTime: 0

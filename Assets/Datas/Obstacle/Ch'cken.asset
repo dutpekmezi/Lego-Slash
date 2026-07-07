@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a71d5f87c6e24fcfbf418d9b3fa20dd2, type: 3}
+  m_Name: Ch'cken
+  m_EditorClassIdentifier: 
+  _displayName: Bunny
+  _id: bunny
+  _prefab: {fileID: 5492620490080580317, guid: 357b2a524d576874ea5dd5772d78c56b, type: 3}
+  _fallDuration: 8
+  _fallEase: 1
+  _cellFractured: {fileID: 416834373349319267, guid: 21a8e57bffbaae94e9bd319b6803165f, type: 3}
+  _cellFractureForce: 5
+  _cellFractureDestroyDelay: 1
+  _cellFracturedDestroyDelay: 5

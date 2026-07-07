@@ -6,6 +6,7 @@ namespace TrashRush.Game
     {
         private readonly Camera _camera;
         private readonly HitTextConfig _config;
+        private readonly StreakConfig _streakConfig;
         private readonly HitText _prefab;
         private readonly RectTransform _parent;
         private readonly Canvas _canvas;
@@ -13,11 +14,13 @@ namespace TrashRush.Game
         public HitTextService(
             Camera camera,
             HitTextConfig config,
+            StreakConfig streakConfig,
             HitText prefab,
             RectTransform parent)
         {
             _camera = camera;
             _config = config;
+            _streakConfig = streakConfig;
             _prefab = prefab;
             _parent = parent;
             _canvas = parent != null ? parent.GetComponentInParent<Canvas>() : null;
@@ -26,6 +29,7 @@ namespace TrashRush.Game
         public void Play(
             Vector3 startWorldPosition,
             Vector3 endWorldPosition,
+            int score,
             int streak)
         {
             if (_camera == null || _config == null || _prefab == null || _parent == null)
@@ -57,7 +61,10 @@ namespace TrashRush.Game
 
             var hitText = Object.Instantiate(_prefab, _parent, false);
             var zRotation = GetHitTextZRotation(delta, _config.MaxRotationAngle);
-            hitText.Play(anchoredPosition, zRotation, streak, _config);
+            var scaleMultiplier = _streakConfig != null
+                ? _streakConfig.GetHitTextScaleMultiplier(streak)
+                : 1f;
+            hitText.Play(anchoredPosition, zRotation, score, scaleMultiplier, _config);
         }
 
         private static float GetHitTextZRotation(Vector3 delta, float maxRotationAngle)

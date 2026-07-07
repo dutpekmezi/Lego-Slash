@@ -11,7 +11,7 @@ namespace TrashRush.Game
         private readonly Transform _cameraRig;
         private readonly SlashManager _slashManager;
         private readonly SlashObjectService _slashObjectService;
-        private readonly HitEffectConfig _config;
+        private readonly StreakConfig _config;
 
         private Tween _cameraTween;
         private float _initialZoom;
@@ -24,7 +24,7 @@ namespace TrashRush.Game
             Transform cameraRig,
             SlashManager slashManager,
             SlashObjectService slashObjectService,
-            HitEffectConfig config)
+            StreakConfig config)
         {
             _camera = camera;
             _cameraRig = cameraRig;
@@ -71,7 +71,7 @@ namespace TrashRush.Game
 
         private void OnStreakChanged(int streak)
         {
-            if (_camera == null || _config == null || !_config.StreakZoomEnabled)
+            if (_camera == null || _config == null || !_config.ZoomEnabled)
             {
                 return;
             }
@@ -81,22 +81,22 @@ namespace TrashRush.Game
                 TweenCamera(
                     _initialZoom,
                     _initialRigLocalPosition,
-                    _config.StreakZoomResetDuration,
-                    _config.StreakZoomResetEase);
+                    _config.ZoomResetDuration,
+                    _config.ZoomResetEase);
                 return;
             }
 
             var zoomAmount = Mathf.Min(
-                streak * _config.StreakZoomAmountPerHit,
-                _config.StreakZoomMaxAmount);
+                streak * _config.ZoomAmountPerHit,
+                _config.ZoomMaxAmount);
             var targetZoom = Mathf.Max(0.01f, _initialZoom - zoomAmount);
             var targetRigPosition = GetClampedFocusPosition(targetZoom);
 
             TweenCamera(
                 targetZoom,
                 targetRigPosition,
-                _config.StreakZoomInDuration,
-                _config.StreakZoomInEase);
+                _config.ZoomInDuration,
+                _config.ZoomInEase);
         }
 
         private void TweenCamera(

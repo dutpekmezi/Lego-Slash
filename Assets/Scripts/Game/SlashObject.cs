@@ -85,7 +85,6 @@ namespace TrashRush.Game
 
             var fracturedObject = Instantiate(_data.CellFractured, transform.parent);
             var fracturedTransform = fracturedObject.transform;
-            fracturedTransform.localScale = _mesh != null ? _mesh.localScale : Vector3.one;
             fracturedTransform.SetPositionAndRotation(
                 DecalFollowTarget.position,
                 DecalFollowTarget.rotation);

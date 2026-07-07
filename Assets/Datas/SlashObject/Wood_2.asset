@@ -16,7 +16,8 @@ MonoBehaviour:
   _id: wood
   _prefab: {fileID: 8635941172046821450, guid: c4a019a249fa8b74db89cb2b6ca886aa, type: 3}
   _slashTexture: {fileID: 2800000, guid: 4212d8667288a854a8d3f24186d7bcc8, type: 3}
-  _totalSlash: 60
+  _hitEffect: {fileID: 730000000000000001, guid: 27c05de32e5867d4f861553d84db29cc, type: 3}
+  _totalSlash: 10
   _fallDuration: 20
   _fallEase: 1
   CellFractured: {fileID: 3903980775869972801, guid: 85f3298df4a80f643b24fd1d36cee1b7, type: 3}

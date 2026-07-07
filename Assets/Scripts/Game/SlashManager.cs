@@ -7,8 +7,10 @@ namespace TrashRush.Game
 {
     public sealed class SlashManager : IDisposable
     {
-        private readonly Slash _slashPrefab;
+        private readonly WeaponSystem _weaponSystem;
         private readonly SlashConfig _slashConfig;
+        private readonly StreakConfig _streakConfig;
+        private readonly PositionConfig _positionConfig;
         private readonly Transform _parent;
         private readonly List<Slash> _activeSlashes = new();
 
@@ -17,6 +19,7 @@ namespace TrashRush.Game
 
         public event Action<int> StreakChanged;
         public event Action<Vector3, Vector3> SlashPlayed;
+        public event Action<ObstacleObject> ObstacleHit;
 
         public int CurrentStreak => _currentStreak;
 
@@ -24,24 +27,38 @@ namespace TrashRush.Game
         {
             get
             {
-                if (_slashPrefab == null)
+                if (_positionConfig != null)
+                {
+                    return _positionConfig.SlashZ;
+                }
+
+                var slashPrefab = _weaponSystem?.CurrentWeapon?.SlashPrefab;
+
+                if (slashPrefab == null)
                 {
                     return 0f;
                 }
 
                 if (_parent == null)
                 {
-                    return _slashPrefab.Depth;
+                    return slashPrefab.Depth;
                 }
 
-                return _parent.TransformPoint(_slashPrefab.transform.localPosition).z;
+                return _parent.TransformPoint(slashPrefab.transform.localPosition).z;
             }
         }
 
-        public SlashManager(Slash slashPrefab, SlashConfig slashConfig, Transform parent)
+        public SlashManager(
+            WeaponSystem weaponSystem,
+            SlashConfig slashConfig,
+            StreakConfig streakConfig,
+            PositionConfig positionConfig,
+            Transform parent)
         {
-            _slashPrefab = slashPrefab;
+            _weaponSystem = weaponSystem;
             _slashConfig = slashConfig;
+            _streakConfig = streakConfig;
+            _positionConfig = positionConfig;
             _parent = parent;
         }
 
@@ -49,15 +66,24 @@ namespace TrashRush.Game
         {
             SlashPlayed?.Invoke(startPosition, endPosition);
 
-            if (_slashPrefab == null)
+            var slashPrefab = _weaponSystem?.CurrentWeapon?.SlashPrefab;
+
+            if (slashPrefab == null)
             {
                 return;
             }
 
-            var slash = UnityEngine.Object.Instantiate(_slashPrefab, _parent);
+            var slash = UnityEngine.Object.Instantiate(slashPrefab, _parent);
+            var position = slash.transform.position;
+            position.z = Depth;
+            slash.transform.position = position;
             slash.Construct(_slashConfig);
             _activeSlashes.Add(slash);
-            slash.Play(startPosition, endPosition, OnSlashCompleted);
+            slash.Play(
+                startPosition,
+                endPosition,
+                OnSlashCompleted,
+                OnObstacleHit);
         }
 
         public int RegisterHit()
@@ -91,10 +117,10 @@ namespace TrashRush.Game
             KillStreakTimeout();
 
             _streakResetTween = DOTween.Sequence()
-                .AppendInterval(_slashConfig.StreakResetDelay)
+                .AppendInterval(_streakConfig != null ? _streakConfig.ResetDelay : 1.5f)
                 .AppendCallback(OnStreakTimeout);
 
-            if (_slashConfig.UseUnscaledTime)
+            if (_streakConfig != null && _streakConfig.UseUnscaledTime)
             {
                 _streakResetTween.SetUpdate(true);
             }
@@ -140,6 +166,11 @@ namespace TrashRush.Game
         {
             _activeSlashes.Remove(slash);
             DestroySlash(slash);
+        }
+
+        private void OnObstacleHit(ObstacleObject obstacle)
+        {
+            ObstacleHit?.Invoke(obstacle);
         }
 
         private static void DestroySlash(Slash slash)

@@ -7,7 +7,7 @@ namespace TrashRush.Game
     public sealed class LeafSlashWindService : IStartable, IDisposable
     {
         private readonly SlashManager _slashManager;
-        private readonly ParticleSystem _fallingLeaves;
+        private readonly EffectBase _fallingLeaves;
         private readonly SlashConfig _config;
 
         private ParticleSystem.Particle[] _particles;
@@ -15,7 +15,7 @@ namespace TrashRush.Game
 
         public LeafSlashWindService(
             SlashManager slashManager,
-            ParticleSystem fallingLeaves,
+            EffectBase fallingLeaves,
             SlashConfig config)
         {
             _slashManager = slashManager;
@@ -65,14 +65,21 @@ namespace TrashRush.Game
             }
 
             EnsureParticleBuffer();
-            var particleCount = _fallingLeaves.GetParticles(_particles);
+            var particleSystem = _fallingLeaves.PrimaryParticleSystem;
+
+            if (particleSystem == null)
+            {
+                return;
+            }
+
+            var particleCount = particleSystem.GetParticles(_particles);
 
             if (particleCount == 0)
             {
                 return;
             }
 
-            var main = _fallingLeaves.main;
+            var main = particleSystem.main;
             var simulationTransform = GetSimulationTransform(main);
             var slashDirection = slashDelta.normalized;
             var radius = _config.LeafWindRadius;
@@ -119,13 +126,16 @@ namespace TrashRush.Game
 
             if (changed)
             {
-                _fallingLeaves.SetParticles(_particles, particleCount);
+                particleSystem.SetParticles(_particles, particleCount);
             }
         }
 
         private void EnsureParticleBuffer()
         {
-            var requiredSize = Mathf.Max(1, _fallingLeaves.main.maxParticles);
+            var particleSystem = _fallingLeaves.PrimaryParticleSystem;
+            var requiredSize = Mathf.Max(
+                1,
+                particleSystem != null ? particleSystem.main.maxParticles : 1);
 
             if (_particles == null || _particles.Length < requiredSize)
             {

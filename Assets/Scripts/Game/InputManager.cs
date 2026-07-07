@@ -8,53 +8,57 @@ namespace TrashRush.Game
     public sealed class InputManager : IStartable, IDisposable
     {
         private const float DefaultMinDragWorldDistance = 1f;
+        private const float DefaultDragTime = 1f;
 
         private readonly Camera _camera;
         private readonly SlashManager _slashManager;
         private readonly SlashDecalSpawner _slashDecalSpawner;
         private readonly SlashObjectService _slashObjectService;
-        private readonly HitTextService _hitTextService;
+        private readonly GamePauseService _pauseService;
+        private readonly ScoreSystem _scoreSystem;
         private readonly SlashConfig _config;
 
         private LeanFinger _activeFinger;
         private Vector3 _startWorldPosition;
-        private bool _slashPlayed;
 
         public InputManager(
             Camera camera,
             SlashManager slashManager,
             SlashDecalSpawner slashDecalSpawner,
             SlashObjectService slashObjectService,
-            HitTextService hitTextService,
+            GamePauseService pauseService,
+            ScoreSystem scoreSystem,
             SlashConfig config)
         {
             _camera = camera;
             _slashManager = slashManager;
             _slashDecalSpawner = slashDecalSpawner;
             _slashObjectService = slashObjectService;
-            _hitTextService = hitTextService;
+            _pauseService = pauseService;
+            _scoreSystem = scoreSystem;
             _config = config;
         }
 
         public void Start()
         {
             LeanTouch.OnFingerDown += OnFingerDown;
-            LeanTouch.OnFingerUpdate += OnFingerUpdate;
             LeanTouch.OnFingerUp += OnFingerUp;
+            _slashManager.ObstacleHit += OnObstacleHit;
         }
 
         public void Dispose()
         {
             LeanTouch.OnFingerDown -= OnFingerDown;
-            LeanTouch.OnFingerUpdate -= OnFingerUpdate;
             LeanTouch.OnFingerUp -= OnFingerUp;
+            _slashManager.ObstacleHit -= OnObstacleHit;
 
             _activeFinger = null;
         }
 
         private void OnFingerDown(LeanFinger finger)
         {
-            if (!_slashObjectService.IsPlaying ||
+            if (_pauseService.IsPaused ||
+                !_slashObjectService.IsPlaying ||
                 finger.StartedOverGui ||
                 finger.IsOverGui)
             {
@@ -68,12 +72,21 @@ namespace TrashRush.Game
 
             _activeFinger = finger;
             _startWorldPosition = GetWorldPosition(finger);
-            _slashPlayed = false;
         }
 
-        private void OnFingerUpdate(LeanFinger finger)
+        private void OnFingerUp(LeanFinger finger)
         {
-            if (_activeFinger != finger || _slashPlayed || finger.IsOverGui)
+            if (_activeFinger != finger)
+            {
+                return;
+            }
+
+            _activeFinger = null;
+
+            if (_pauseService.IsPaused ||
+                !_slashObjectService.IsPlaying ||
+                finger.IsOverGui ||
+                finger.Age > DragTime)
             {
                 return;
             }
@@ -96,26 +109,21 @@ namespace TrashRush.Game
                     out var slashObject))
             {
                 var streak = _slashManager.RegisterHit();
-                _hitTextService.Play(_startWorldPosition, endWorldPosition, streak);
+                _scoreSystem.RegisterSlash(streak);
                 _slashObjectService.TryRegisterSlash(slashObject);
             }
             else
             {
                 _slashManager.RegisterMiss();
             }
-
-            _slashPlayed = true;
         }
 
-        private void OnFingerUp(LeanFinger finger)
+        private void OnObstacleHit(ObstacleObject obstacle)
         {
-            if (_activeFinger != finger)
+            if (_slashObjectService.TryRegisterObstacleSlash(obstacle))
             {
-                return;
+                _slashManager.RegisterMiss();
             }
-
-            _activeFinger = null;
-            _slashPlayed = false;
         }
 
         private Vector3 GetWorldPosition(LeanFinger finger)
@@ -128,5 +136,8 @@ namespace TrashRush.Game
 
         private float MinDragWorldDistance =>
             _config != null ? Mathf.Max(0f, _config.MinDragWorldDistance) : DefaultMinDragWorldDistance;
+
+        private float DragTime =>
+            _config != null ? Mathf.Max(0.01f, _config.DragTime) : DefaultDragTime;
     }
 }

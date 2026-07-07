@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using GameLift.Pooling;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -18,44 +19,101 @@ namespace TrashRush.Game
         private static readonly int SlashTextureId = Shader.PropertyToID("Base_Map");
 
         private readonly Camera _camera;
+        private readonly IPools _pools;
+        private readonly WeaponSystem _weaponSystem;
         private readonly SlashConfig _config;
         private readonly HitEffectConfig _hitEffectConfig;
+        private readonly StreakConfig _streakConfig;
+        private readonly PositionConfig _positionConfig;
+        private readonly Transform _effectsRoot;
+        private readonly Transform _background;
         private readonly GameObject _decalProjectorPrefab;
-        private readonly Sprite _backgroundSlashHalfSprite;
-        private readonly Sprite _backgroundSlashTopHalfSprite;
         private readonly LayerMask _hitLayerMask;
         private readonly int _hitSampleCount;
         private readonly Dictionary<Texture2D, Material> _decalMaterials = new();
+        private readonly List<SpriteRenderer> _activeBackgroundSlashSprites = new();
 
         private Tween _screenShakeTween;
         private Vector3 _cameraStartLocalPosition;
+        private int _backgroundSlashBaseSortingOrder;
 
         public SlashDecalSpawner(
             Camera camera,
+            IPools pools,
+            WeaponSystem weaponSystem,
             SlashConfig config,
             HitEffectConfig hitEffectConfig,
+            StreakConfig streakConfig,
+            PositionConfig positionConfig,
+            Transform effectsRoot,
+            Transform background,
             GameObject decalProjectorPrefab,
-            Sprite backgroundSlashHalfSprite,
-            Sprite backgroundSlashTopHalfSprite,
             LayerMask hitLayerMask,
             int hitSampleCount)
         {
             _camera = camera;
+            _pools = pools;
+            _weaponSystem = weaponSystem;
             _config = config;
             _hitEffectConfig = hitEffectConfig;
+            _streakConfig = streakConfig;
+            _positionConfig = positionConfig;
+            _effectsRoot = effectsRoot;
+            _background = background;
             _decalProjectorPrefab = decalProjectorPrefab;
-            _backgroundSlashHalfSprite = backgroundSlashHalfSprite;
-            _backgroundSlashTopHalfSprite = backgroundSlashTopHalfSprite;
             _hitLayerMask = hitLayerMask;
             _hitSampleCount = Mathf.Max(2, hitSampleCount);
             _cameraStartLocalPosition = _camera != null
                 ? _camera.transform.localPosition
                 : Vector3.zero;
+
+            InitializeWeaponPools();
+        }
+
+        private void InitializeWeaponPools()
+        {
+            if (_pools == null || _weaponSystem == null)
+            {
+                return;
+            }
+
+            var weapons = _weaponSystem.Weapons;
+
+            for (var i = 0; i < weapons.Count; i++)
+            {
+                var weapon = weapons[i];
+
+                if (weapon == null)
+                {
+                    continue;
+                }
+
+                if (weapon.BackgroundSlashPrefab != null)
+                {
+                    _pools.InitializePool(
+                        weapon.BackgroundSlashPrefab.gameObject,
+                        0);
+                }
+
+                if (weapon.SlashStreakEffect != null)
+                {
+                    _pools.InitializePool(
+                        weapon.SlashStreakEffect.gameObject,
+                        _streakConfig != null
+                            ? _streakConfig.SlashStreakEffectPoolPreload
+                            : 0);
+                }
+
+            }
         }
 
         public bool TrySpawn(Vector3 startWorldPosition, Vector3 endWorldPosition)
         {
-            return TrySpawn(startWorldPosition, endWorldPosition, 1, out _);
+            return TrySpawn(
+                startWorldPosition,
+                endWorldPosition,
+                1,
+                out _);
         }
 
         public bool TrySpawn(
@@ -63,7 +121,11 @@ namespace TrashRush.Game
             Vector3 endWorldPosition,
             out SlashObject slashObject)
         {
-            return TrySpawn(startWorldPosition, endWorldPosition, 1, out slashObject);
+            return TrySpawn(
+                startWorldPosition,
+                endWorldPosition,
+                1,
+                out slashObject);
         }
 
         public bool TrySpawn(
@@ -73,11 +135,12 @@ namespace TrashRush.Game
             out SlashObject slashObject)
         {
             slashObject = null;
+            var backgroundSlashPrefab =
+                _weaponSystem?.CurrentWeapon?.BackgroundSlashPrefab;
 
             if (_camera == null ||
                 (_decalProjectorPrefab == null &&
-                 _backgroundSlashHalfSprite == null &&
-                 _backgroundSlashTopHalfSprite == null))
+                 backgroundSlashPrefab == null))
             {
                 return false;
             }
@@ -101,18 +164,19 @@ namespace TrashRush.Game
                 return false;
             }
 
+            var height = GetProjectorHeight(delta.magnitude);
+
             if (slashObject == null || !slashObject.IsSlashable)
             {
                 return false;
             }
 
-            var height = GetProjectorHeight(delta.magnitude);
-
-            TrySpawnBackgroundSprite(
+            TrySpawnBackgroundPrefabs(
                 startWorldPosition,
                 endWorldPosition,
                 delta,
-                slashObject);
+                slashObject,
+                streak);
 
             Spawn(
                 _decalProjectorPrefab,
@@ -122,6 +186,16 @@ namespace TrashRush.Game
                 GetSlashZRotation(delta),
                 height,
                 slashObject.Data.SlashTexture);
+
+            SpawnSlashStreakEffect(
+                GetSpawnPosition(decalPoint, startWorldPosition, endWorldPosition),
+                GetSlashZRotation(delta),
+                streak);
+
+            SpawnSlashObjectHitEffect(
+                startWorldPosition,
+                endWorldPosition,
+                slashObject);
 
             PlayHitEffect(slashObject.RotationTarget, hitRoot, delta, height, streak);
             PlayScreenShake(streak);
@@ -141,6 +215,7 @@ namespace TrashRush.Game
             }
 
             _decalMaterials.Clear();
+            _activeBackgroundSlashSprites.Clear();
         }
 
         private bool TryFindHit(
@@ -153,6 +228,10 @@ namespace TrashRush.Game
         {
             var startScreenPosition = _camera.WorldToScreenPoint(startWorldPosition);
             var endScreenPosition = _camera.WorldToScreenPoint(endWorldPosition);
+            Transform slashDecalPoint = null;
+            Transform slashFollowParent = null;
+            Transform slashHitRoot = null;
+            SlashObject slashCandidate = null;
 
             for (var i = 0; i < _hitSampleCount; i++)
             {
@@ -168,8 +247,23 @@ namespace TrashRush.Game
                         out hitRoot,
                         out slashObject))
                 {
-                    return true;
+                    if (slashCandidate == null && slashObject != null)
+                    {
+                        slashDecalPoint = decalPoint;
+                        slashFollowParent = followParent;
+                        slashHitRoot = hitRoot;
+                        slashCandidate = slashObject;
+                    }
                 }
+            }
+
+            if (slashCandidate != null)
+            {
+                decalPoint = slashDecalPoint;
+                followParent = slashFollowParent;
+                hitRoot = slashHitRoot;
+                slashObject = slashCandidate;
+                return true;
             }
 
             decalPoint = null;
@@ -196,6 +290,10 @@ namespace TrashRush.Game
             }
 
             Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
+            Transform slashDecalPoint = null;
+            Transform slashFollowParent = null;
+            Transform slashHitRoot = null;
+            SlashObject slashCandidate = null;
 
             for (var i = 0; i < hits.Length; i++)
             {
@@ -206,8 +304,23 @@ namespace TrashRush.Game
                         out hitRoot,
                         out slashObject))
                 {
-                    return true;
+                    if (slashCandidate == null && slashObject != null)
+                    {
+                        slashDecalPoint = decalPoint;
+                        slashFollowParent = followParent;
+                        slashHitRoot = hitRoot;
+                        slashCandidate = slashObject;
+                    }
                 }
+            }
+
+            if (slashCandidate != null)
+            {
+                decalPoint = slashDecalPoint;
+                followParent = slashFollowParent;
+                hitRoot = slashHitRoot;
+                slashObject = slashCandidate;
+                return true;
             }
 
             decalPoint = null;
@@ -226,12 +339,23 @@ namespace TrashRush.Game
         {
             for (var current = hitTransform; current != null; current = current.parent)
             {
+                if (current.GetComponent<ObstacleObject>() != null)
+                {
+                    continue;
+                }
+
                 decalPoint = current.Find(DecalProjectorPointName);
 
                 if (decalPoint != null)
                 {
                     hitRoot = current;
                     slashObject = current.GetComponent<SlashObject>();
+
+                    if (slashObject == null)
+                    {
+                        continue;
+                    }
+
                     followParent = slashObject != null
                         ? slashObject.DecalFollowTarget
                         : FindFollowParent(current);
@@ -252,17 +376,25 @@ namespace TrashRush.Game
             return mesh != null ? mesh : hitRoot;
         }
 
-        private bool TrySpawnBackgroundSprite(
+        private bool TrySpawnBackgroundPrefabs(
             Vector3 startWorldPosition,
             Vector3 endWorldPosition,
             Vector3 slashDelta,
-            SlashObject slashObject)
+            SlashObject slashObject,
+            int streak)
         {
-            if (_backgroundSlashHalfSprite == null ||
-                _backgroundSlashTopHalfSprite == null ||
+            var weapon = _weaponSystem?.CurrentWeapon;
+            var backgroundSlashPrefab = weapon?.BackgroundSlashPrefab;
+
+            if (backgroundSlashPrefab == null ||
+                _pools == null ||
                 slashObject == null ||
-                (_config != null && !_config.BackgroundSlashEnabled) ||
-                !TryFindBackgroundPoint(
+                (_config != null && !_config.BackgroundSlashEnabled))
+            {
+                return false;
+            }
+
+            if (!TryFindBackgroundPoint(
                     startWorldPosition,
                     endWorldPosition,
                     out var backgroundPoint,
@@ -299,45 +431,57 @@ namespace TrashRush.Game
                     out var entryT,
                     out var exitT))
             {
-                return false;
+                entryT = 0.5f;
+                exitT = 0.5f;
+            }
+            else if (entryT <= Mathf.Epsilon && exitT >= 1f - Mathf.Epsilon)
+            {
+                entryT = 0.5f;
+                exitT = 0.5f;
             }
 
             var zRotation = GetSlashZRotation(slashDelta);
+            var playBackgroundEffect =
+                _streakConfig != null &&
+                _streakConfig.ShouldPlaySlashStreakBackground(streak);
             var spawnedBefore = TrySpawnBackgroundSegment(
-                _backgroundSlashHalfSprite,
-                "BackgroundSlashHalf",
+                backgroundSlashPrefab,
                 backgroundPoint,
                 backgroundRoot,
                 visualStart,
                 Vector3.Lerp(visualStart, visualEnd, entryT),
                 zRotation,
-                scaleMultiplier.y);
+                scaleMultiplier.y,
+                true,
+                playBackgroundEffect);
             var spawnedAfter = TrySpawnBackgroundSegment(
-                _backgroundSlashTopHalfSprite,
-                "BackgroundSlashTopHalf",
+                backgroundSlashPrefab,
                 backgroundPoint,
                 backgroundRoot,
                 Vector3.Lerp(visualStart, visualEnd, exitT),
                 visualEnd,
                 zRotation,
-                scaleMultiplier.y);
+                scaleMultiplier.y,
+                false,
+                playBackgroundEffect);
 
             return spawnedBefore || spawnedAfter;
         }
 
         private bool TrySpawnBackgroundSegment(
-            Sprite sprite,
-            string objectName,
+            SpriteRenderer prefab,
             Transform backgroundPoint,
             Transform backgroundRoot,
             Vector3 segmentStart,
             Vector3 segmentEnd,
             float zRotation,
-            float heightScale)
+            float heightScale,
+            bool flipY,
+            bool playBackgroundEffect)
         {
             var renderedHeight = Vector3.Distance(segmentStart, segmentEnd);
 
-            if (sprite == null || renderedHeight <= Mathf.Epsilon)
+            if (prefab == null || renderedHeight <= Mathf.Epsilon)
             {
                 return false;
             }
@@ -346,50 +490,74 @@ namespace TrashRush.Game
                 ? renderedHeight / heightScale
                 : renderedHeight;
 
-            SpawnBackgroundSprite(
-                sprite,
-                objectName,
+            return SpawnBackgroundPrefab(
+                prefab,
                 backgroundPoint,
                 backgroundRoot,
                 Vector3.Lerp(segmentStart, segmentEnd, 0.5f),
                 zRotation,
-                baseHeight);
-            return true;
+                baseHeight,
+                flipY,
+                playBackgroundEffect);
         }
 
-        private void SpawnBackgroundSprite(
-            Sprite sprite,
-            string objectName,
+        private bool SpawnBackgroundPrefab(
+            SpriteRenderer prefab,
             Transform backgroundPoint,
             Transform backgroundRoot,
             Vector3 worldPosition,
             float zRotation,
-            float baseHeight)
+            float baseHeight,
+            bool flipY,
+            bool playBackgroundEffect)
         {
-            var spriteObject = new GameObject(objectName);
+            var spriteObject = _pools.Spawn(prefab.gameObject, backgroundPoint);
+
+            if (spriteObject == null)
+            {
+                return false;
+            }
+
             var spriteTransform = spriteObject.transform;
-            var spriteRenderer = spriteObject.AddComponent<SpriteRenderer>();
+            var spriteRenderer = spriteObject.GetComponent<SpriteRenderer>();
+
+            if (spriteRenderer == null || spriteRenderer.sprite == null)
+            {
+                _pools.Despawn(spriteObject);
+                return false;
+            }
+
             var backgroundRenderer = backgroundRoot != null
                 ? backgroundRoot.GetComponent<SpriteRenderer>()
                 : null;
 
-            spriteRenderer.sprite = sprite;
             spriteRenderer.color = _config != null
                 ? _config.BackgroundSlashColor
                 : Color.white;
+            spriteRenderer.flipY = false;
 
             if (backgroundRenderer != null)
             {
                 spriteRenderer.sortingLayerID = backgroundRenderer.sortingLayerID;
-                spriteRenderer.sortingOrder = backgroundRenderer.sortingOrder +
-                    (_config != null ? _config.BackgroundSlashSortingOrderOffset : 1);
             }
+
+            _backgroundSlashBaseSortingOrder =
+                (backgroundRenderer != null ? backgroundRenderer.sortingOrder : 0) +
+                (_config != null ? _config.BackgroundSlashSortingOrderOffset : 1);
+            RemoveMissingBackgroundSlashSprites();
+            RefreshBackgroundSlashSortingOrders();
+            spriteRenderer.sortingOrder =
+                _backgroundSlashBaseSortingOrder + _activeBackgroundSlashSprites.Count;
+            _activeBackgroundSlashSprites.Add(spriteRenderer);
 
             spriteTransform.SetPositionAndRotation(
                 worldPosition,
-                backgroundPoint.rotation * Quaternion.AngleAxis(zRotation, Vector3.forward));
+                backgroundPoint.rotation *
+                Quaternion.AngleAxis(
+                    zRotation + (flipY ? 180f : 0f),
+                    Vector3.forward));
 
-            var spriteHeight = sprite.bounds.size.y;
+            var spriteHeight = spriteRenderer.sprite.bounds.size.y;
             var uniformScale = spriteHeight > Mathf.Epsilon
                 ? baseHeight / spriteHeight
                 : 1f;
@@ -400,9 +568,23 @@ namespace TrashRush.Game
                 uniformScale * scaleMultiplier.x,
                 uniformScale * scaleMultiplier.y,
                 1f);
-            spriteTransform.SetParent(backgroundPoint, true);
 
-            PlayFadeAndDestroy(spriteObject, spriteRenderer);
+            var backgroundEffect =
+                spriteObject.GetComponentInChildren<EffectBase>(true);
+
+            if (backgroundEffect != null)
+            {
+                backgroundEffect.gameObject.SetActive(true);
+                backgroundEffect.Stop(true);
+
+                if (playBackgroundEffect)
+                {
+                    backgroundEffect.Play();
+                }
+            }
+
+            PlayFadeAndDespawn(spriteObject, spriteRenderer);
+            return true;
         }
 
         private bool TryFindBackgroundPoint(
@@ -411,6 +593,17 @@ namespace TrashRush.Game
             out Transform backgroundPoint,
             out Transform backgroundRoot)
         {
+            if (_background != null)
+            {
+                backgroundPoint = _background.Find(SlashParentName);
+
+                if (backgroundPoint != null)
+                {
+                    backgroundRoot = _background;
+                    return true;
+                }
+            }
+
             var startScreenPosition = _camera.WorldToScreenPoint(startWorldPosition);
             var endScreenPosition = _camera.WorldToScreenPoint(endWorldPosition);
 
@@ -603,6 +796,89 @@ namespace TrashRush.Game
             return false;
         }
 
+        private void SpawnSlashObjectHitEffect(
+            Vector3 lineStart,
+            Vector3 lineEnd,
+            SlashObject slashObject)
+        {
+            var effectPrefab = slashObject?.Data?.HitEffect;
+
+            if (_pools == null ||
+                effectPrefab == null ||
+                !TryGetSlashHitMidpoint(
+                    lineStart,
+                    lineEnd,
+                    slashObject,
+                    out var hitPoint))
+            {
+                return;
+            }
+
+            var effect = _pools.Spawn(effectPrefab, _effectsRoot);
+
+            if (effect == null)
+            {
+                return;
+            }
+
+            effect.Stop(true);
+            effect.transform.SetPositionAndRotation(
+                hitPoint,
+                effectPrefab.transform.rotation);
+            effect.transform.localScale = effectPrefab.transform.localScale;
+            effect.Play();
+
+            _pools.Despawn(effect, Mathf.Max(0.01f, effect.TotalLifetime));
+        }
+
+        private bool TryGetSlashHitMidpoint(
+            Vector3 lineStart,
+            Vector3 lineEnd,
+            SlashObject slashObject,
+            out Vector3 hitPoint)
+        {
+            if (!TryFindSlashOcclusion(
+                    lineStart,
+                    lineEnd,
+                    slashObject,
+                    out var entryT,
+                    out var exitT))
+            {
+                hitPoint = default;
+                return false;
+            }
+
+            var midpoint = Vector3.Lerp(
+                lineStart,
+                lineEnd,
+                (entryT + exitT) * 0.5f);
+            var ray = _camera.ScreenPointToRay(
+                _camera.WorldToScreenPoint(midpoint));
+            var hits = Physics.RaycastAll(
+                ray,
+                _camera.farClipPlane,
+                _hitLayerMask,
+                QueryTriggerInteraction.Ignore);
+            var closestDistance = float.PositiveInfinity;
+            var found = false;
+            hitPoint = default;
+
+            for (var i = 0; i < hits.Length; i++)
+            {
+                if (hits[i].collider.GetComponentInParent<SlashObject>() != slashObject ||
+                    hits[i].distance >= closestDistance)
+                {
+                    continue;
+                }
+
+                closestDistance = hits[i].distance;
+                hitPoint = hits[i].point;
+                found = true;
+            }
+
+            return found;
+        }
+
         private void Spawn(
             GameObject decalProjectorPrefab,
             Transform decalPoint,
@@ -710,7 +986,9 @@ namespace TrashRush.Game
             }
         }
 
-        private void PlayFadeAndDestroy(GameObject spriteObject, SpriteRenderer spriteRenderer)
+        private void PlayFadeAndDespawn(
+            GameObject spriteObject,
+            SpriteRenderer spriteRenderer)
         {
             var lifetime = _config != null ? _config.BackgroundSlashLifetime : 0f;
             var fadeTime = _config != null ? _config.BackgroundSlashFadeTime : 0f;
@@ -732,12 +1010,85 @@ namespace TrashRush.Game
                 sequence.Append(spriteRenderer.DOFade(0f, fadeTime).SetEase(Ease.Linear));
             }
 
-            sequence.AppendCallback(() => UnityEngine.Object.Destroy(spriteObject));
+            sequence.AppendCallback(() =>
+            {
+                RemoveBackgroundSlashSprite(spriteRenderer);
+                _pools.Despawn(spriteObject);
+            });
 
             if (_config != null && _config.UseUnscaledTime)
             {
                 sequence.SetUpdate(true);
             }
+        }
+
+        private void RemoveBackgroundSlashSprite(SpriteRenderer spriteRenderer)
+        {
+            _activeBackgroundSlashSprites.Remove(spriteRenderer);
+            RemoveMissingBackgroundSlashSprites();
+            RefreshBackgroundSlashSortingOrders();
+        }
+
+        private void RemoveMissingBackgroundSlashSprites()
+        {
+            for (var i = _activeBackgroundSlashSprites.Count - 1; i >= 0; i--)
+            {
+                if (_activeBackgroundSlashSprites[i] == null)
+                {
+                    _activeBackgroundSlashSprites.RemoveAt(i);
+                }
+            }
+        }
+
+        private void RefreshBackgroundSlashSortingOrders()
+        {
+            for (var i = 0; i < _activeBackgroundSlashSprites.Count; i++)
+            {
+                _activeBackgroundSlashSprites[i].sortingOrder =
+                    _backgroundSlashBaseSortingOrder + i;
+            }
+        }
+
+        private void SpawnSlashStreakEffect(
+            Vector3 slashWorldPosition,
+            float slashZRotation,
+            int streak)
+        {
+            var effectPrefab = _weaponSystem?.CurrentWeapon?.SlashStreakEffect;
+
+            if (_streakConfig == null ||
+                _positionConfig == null ||
+                effectPrefab == null ||
+                !_streakConfig.ShouldSpawnSlashStreakEffect(streak))
+            {
+                return;
+            }
+
+            if (_pools == null)
+            {
+                return;
+            }
+
+            var effect = _pools.Spawn(effectPrefab, _effectsRoot);
+
+            if (effect == null)
+            {
+                return;
+            }
+
+            var localOffset = _streakConfig.SlashStreakEffectLocalOffset;
+            var slashWorldRotation = Quaternion.Euler(0f, 0f, slashZRotation);
+            var worldOffset = slashWorldRotation *
+                new Vector3(localOffset.x, localOffset.y, 0f);
+            slashWorldPosition.z = _positionConfig.SlashStreakEffectZ;
+
+            effect.Stop(true);
+            effect.transform.SetPositionAndRotation(
+                slashWorldPosition + worldOffset,
+                slashWorldRotation);
+
+            effect.Play();
+            _pools.Despawn(effect, _streakConfig.SlashStreakEffectLifetime);
         }
 
         private void PlayHitEffect(
@@ -763,16 +1114,25 @@ namespace TrashRush.Game
                 return;
             }
 
-            var worldRotationAxis = Vector3.Cross(_camera.transform.forward, slashDirection).normalized;
-            var localRotationAxis = rotationTarget.InverseTransformDirection(worldRotationAxis).normalized;
+            var worldRotationAxis = Vector3.Cross(slashDirection, _camera.transform.forward).normalized;
             var rotationAngle =
-                GetHitRotationAngle(projectorHeight) * _hitEffectConfig.GetRotationStrengthMultiplier(streak) * -1;
-            var rotationOffset = localRotationAxis * rotationAngle;
-            var rotationTween = rotationTarget
-                .DOBlendableLocalRotateBy(
-                    rotationOffset,
-                    _hitEffectConfig.RotationDuration,
-                    RotateMode.LocalAxisAdd)
+                GetHitRotationAngle(projectorHeight) *
+                (_streakConfig != null
+                    ? _streakConfig.GetRotationStrengthMultiplier(streak)
+                    : 1f);
+            var appliedAngle = 0f;
+            var rotationTween = DOVirtual
+                .Float(0f, rotationAngle, _hitEffectConfig.RotationDuration, angle =>
+                {
+                    if (rotationTarget == null)
+                    {
+                        return;
+                    }
+
+                    var deltaAngle = angle - appliedAngle;
+                    appliedAngle = angle;
+                    rotationTarget.Rotate(worldRotationAxis, deltaAngle, Space.World);
+                })
                 .SetEase(_hitEffectConfig.RotationEase)
                 .SetLink(rotationTarget.gameObject);
 
@@ -792,7 +1152,12 @@ namespace TrashRush.Game
                 return;
             }
 
-            var strength = _hitEffectConfig.GetScreenShakeStrength(streak);
+            var strength = _streakConfig != null
+                ? _streakConfig.GetScreenShakeStrength(
+                    streak,
+                    _hitEffectConfig.ScreenShakeBaseStrength,
+                    _hitEffectConfig.ScreenShakeMaxStrength)
+                : _hitEffectConfig.ScreenShakeBaseStrength;
 
             if (strength <= 0f)
             {

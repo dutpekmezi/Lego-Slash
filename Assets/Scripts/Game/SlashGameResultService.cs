@@ -1,6 +1,7 @@
 using GameLift.Levels;
 using GameLift.Popup;
 using GameLift.UI.GamePopups;
+using UnityEngine;
 
 namespace TrashRush.Game
 {
@@ -8,15 +9,21 @@ namespace TrashRush.Game
     {
         private readonly LevelService<BaseLevelData> _levelService;
         private readonly IPopupService _popupService;
+        private readonly ScoreSystem _scoreSystem;
+        private readonly GameObject _scoreCanvas;
 
         private bool _resultShown;
 
         public SlashGameResultService(
             LevelService<BaseLevelData> levelService,
-            IPopupService popupService)
+            IPopupService popupService,
+            ScoreSystem scoreSystem,
+            GameObject scoreCanvas)
         {
             _levelService = levelService;
             _popupService = popupService;
+            _scoreSystem = scoreSystem;
+            _scoreCanvas = scoreCanvas;
         }
 
         public void ShowWin()
@@ -27,8 +34,10 @@ namespace TrashRush.Game
             }
 
             _resultShown = true;
+            HideScoreCanvas();
             _levelService.OnLevelCompleted(true);
-            _popupService.Create<GameWinPopup>(true);
+            var popup = _popupService.Create<GameWinPopup>(true);
+            popup.SetFinalScore(_scoreSystem.CurrentScore);
         }
 
         public void ShowLose()
@@ -39,8 +48,17 @@ namespace TrashRush.Game
             }
 
             _resultShown = true;
+            HideScoreCanvas();
             _levelService.OnLevelCompleted(false);
             _popupService.Create<GameLosePopup>(true);
+        }
+
+        private void HideScoreCanvas()
+        {
+            if (_scoreCanvas != null)
+            {
+                _scoreCanvas.SetActive(false);
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 198759988390340424}
   - component: {fileID: 199636859027055282}
   - component: {fileID: 205455111365489576}
+  - component: {fileID: 740000000000000008}
   m_Layer: 0
   m_Name: Leaf2
   m_TagString: Untagged
@@ -4898,7 +4899,26 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 6022309046813637204, guid: 5c56153f136feef44b8503aeb7df7d95, type: 3}
   m_Mesh2: {fileID: 3108227567086324461, guid: 4a4b3b0fda63f6245baebd6c3cb15209, type: 3}
   m_Mesh3: {fileID: 6219593700477992046, guid: 1c409bf2b418b454fa26d80f712590c1, type: 3}
-  m_MaskInteraction: 0
+  m_MaskInteraction: 0--- !u!114 &740000000000000008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017164405197158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includeChildren: 1
+  _playOnEnable: 0
+  _clearBeforePlay: 1
+  _clearOnStop: 1
+  _restartWithDelayEnabled: 0
+  _restartDelay: 0.25
+  _useUnscaledTime: 0
+
 --- !u!205 &205455111365489576
 LODGroup:
   m_ObjectHideFlags: 0

@@ -31,7 +31,8 @@ namespace TrashRush.Game
         public void Play(
             Vector2 anchoredPosition,
             float zRotation,
-            int streak,
+            int score,
+            float scaleMultiplier,
             HitTextConfig config)
         {
             EnsureReferences();
@@ -48,8 +49,8 @@ namespace TrashRush.Game
             _sequence?.Kill(false);
             _rectTransform.anchoredPosition = anchoredPosition;
             _rectTransform.localRotation = Quaternion.Euler(0f, 0f, zRotation);
-            _rectTransform.localScale = Vector3.one * config.GetScaleMultiplier(streak);
-            _label.text = $"{Mathf.Max(1, streak)}!";
+            _rectTransform.localScale = Vector3.one * Mathf.Max(1f, scaleMultiplier);
+            _label.text = $"+{Mathf.Max(0, score)}";
             _canvasGroup.alpha = 1f;
             _canvasGroup.interactable = false;
             _canvasGroup.blocksRaycasts = false;

@@ -15,3 +15,9 @@ MonoBehaviour:
   <Index>k__BackingField: 0
   _slashObjects:
   - {fileID: 11400000, guid: e43f72c341d0ccc46953a8bf99bb8f16, type: 2}
+  _obstacleObjects:
+  - {fileID: 11400000, guid: 1d8a14602b3664147993ae47d94cf847, type: 2}
+  - {fileID: 11400000, guid: 3d252644e6f4be040a4f851a79376d09, type: 2}
+  _obstacleSpawnInterval: 4
+  _obstaclesPerSpawn: 1
+  _maxObstacleSpawnCount: 100

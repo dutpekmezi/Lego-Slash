@@ -53,7 +53,7 @@ namespace GameLift.Installer
             builder.Register<ISaveHandler, EncryptedSaveHandler>(Lifetime.Singleton);
             builder.Register<ISaveService, SaveService>(Lifetime.Singleton);
 
-            builder.Register<IPools, Pools>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<Pools>(Lifetime.Singleton).As<IPools>();
 
             builder.RegisterInstance(_popupSettings);
             builder.Register<IPopupService, PopupService>(Lifetime.Singleton).WithParameter(_popupCanvas);
