@@ -369,6 +369,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FireEffect
       objectReference: {fileID: 0}
+    - target: {fileID: 6883640553915168038, guid: 59e0450732c9c1c47aa8075774dacdf8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7896946382209251806, guid: 59e0450732c9c1c47aa8075774dacdf8, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.029999733

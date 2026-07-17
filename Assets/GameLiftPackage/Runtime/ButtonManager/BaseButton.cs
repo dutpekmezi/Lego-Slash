@@ -73,7 +73,7 @@ namespace GameLift.Buttons
 
         public virtual void BaseOnClick()
         {
-            _buttonManager.OnButtonClickedHandler(this);
+            _buttonManager?.OnButtonClickedHandler(this);
 
             if (playDefaultTapAnimation)
             {
@@ -94,7 +94,7 @@ namespace GameLift.Buttons
                     .SetLink(gameObject);
             }
 
-            _feedbackService.Play("button_click");
+            _feedbackService?.Play("button_click");
         }
 
         /*public async void ShowTutorialHand()

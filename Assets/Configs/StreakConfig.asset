@@ -34,10 +34,10 @@ MonoBehaviour:
   _zoomInEase: 21
   _zoomResetEase: 3
   _slashStreakEffectEnabled: 1
-  _slashStreakEffectStartStreak: 3
+  _slashStreakEffectStartStreak: 1
   _slashStreakEffectLocalOffset: {x: 0, y: 0}
   _slashStreakEffectLifetime: 5
   _slashStreakEffectPoolPreload: 10
   _slashStreakBackgroundEnabled: 1
-  _slashStreakBackgroundStartStreak: 3
+  _slashStreakBackgroundStartStreak: 1
   _slashStreakBackgroundChance: 1

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,12 +9,16 @@ namespace TrashRush.Game
     {
         [SerializeField] private WeaponDatas _weaponDatas;
         [SerializeField] private Transform _weaponPoint;
-        [SerializeField] private Transform _weaponsPageRoot;
-        [SerializeField] private Button _leftArrowButton;
-        [SerializeField] private Button _rightArrowButton;
+        [SerializeField] private WeaponCardUI _weaponCardPrefab;
+        [SerializeField] private Transform _iapItemContainer;
+        [Header("Selected Weapon Info")]
+        [SerializeField] private TMP_Text _weaponNameLabel;
+        [SerializeField] private TMP_Text _weaponDescriptionLabel;
+        [SerializeField] private TMP_Text _rarityLabel;
+        [SerializeField] private Image _rarityBackground;
         [SerializeField, Min(0)] private int _startIndex;
-        [SerializeField] private bool _skipEmptyWeaponPrefabs = true;
 
+        private readonly List<WeaponCardUI> _cards = new();
         private GameObject _currentWeaponInstance;
         private int _currentIndex = -1;
 
@@ -22,25 +27,13 @@ namespace TrashRush.Game
 
         private void Awake()
         {
-            ResolveArrowButtons();
-            RegisterArrowButtons();
+            BuildCards();
             ShowInitialWeapon();
         }
 
         private void OnDestroy()
         {
-            UnregisterArrowButtons();
             DestroyCurrentWeapon();
-        }
-
-        public void ShowNext()
-        {
-            ShowByDirection(1);
-        }
-
-        public void ShowPrevious()
-        {
-            ShowByDirection(-1);
         }
 
         public void Show(int index)
@@ -54,8 +47,8 @@ namespace TrashRush.Game
 
             index = WrapIndex(index);
 
-            if (_skipEmptyWeaponPrefabs &&
-                !TryFindValidIndex(index, 1, out index))
+            if (!IsValidWeaponIndex(index) &&
+                !TryFindValidIndex(index, out index))
             {
                 _currentIndex = -1;
                 DestroyCurrentWeapon();
@@ -64,6 +57,58 @@ namespace TrashRush.Game
 
             _currentIndex = index;
             RenderCurrentWeapon();
+            RefreshSelectedWeaponInfo();
+            RefreshCardSelection();
+        }
+
+        public void Show(WeaponData weaponData)
+        {
+            if (weaponData == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < Weapons.Count; i++)
+            {
+                if (Weapons[i] == weaponData)
+                {
+                    Show(i);
+                    return;
+                }
+            }
+        }
+
+        private void BuildCards()
+        {
+            ResolveCardPrefabFromContainer();
+            ClearContainer();
+            _cards.Clear();
+
+            if (_weaponCardPrefab == null || _iapItemContainer == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < Weapons.Count; i++)
+            {
+                var weaponData = Weapons[i];
+
+                if (weaponData == null)
+                {
+                    continue;
+                }
+
+                var card = Instantiate(_weaponCardPrefab, _iapItemContainer);
+
+                if (card == null)
+                {
+                    continue;
+                }
+
+                card.gameObject.SetActive(true);
+                card.Setup(weaponData, OnCardClicked);
+                _cards.Add(card);
+            }
         }
 
         private void ShowInitialWeapon()
@@ -71,45 +116,16 @@ namespace TrashRush.Game
             Show(_startIndex);
         }
 
-        private void ShowByDirection(int direction)
-        {
-            if (Weapons.Count == 0)
-            {
-                DestroyCurrentWeapon();
-                return;
-            }
-
-            var startIndex = _currentIndex >= 0
-                ? _currentIndex + direction
-                : _startIndex;
-
-            startIndex = WrapIndex(startIndex);
-
-            if (_skipEmptyWeaponPrefabs &&
-                !TryFindValidIndex(startIndex, direction, out startIndex))
-            {
-                DestroyCurrentWeapon();
-                return;
-            }
-
-            Show(startIndex);
-        }
-
         private void RenderCurrentWeapon()
         {
             DestroyCurrentWeapon();
 
-            if (_weaponPoint == null ||
-                _currentIndex < 0 ||
-                _currentIndex >= Weapons.Count)
-            {
-                return;
-            }
-
-            var weaponData = Weapons[_currentIndex];
+            var weaponData = IsValidWeaponIndex(_currentIndex)
+                ? Weapons[_currentIndex]
+                : null;
             var weaponPrefab = weaponData != null ? weaponData.WeaponPrefab : null;
 
-            if (weaponPrefab == null)
+            if (_weaponPoint == null || weaponPrefab == null)
             {
                 return;
             }
@@ -118,6 +134,58 @@ namespace TrashRush.Game
             _currentWeaponInstance.transform.localPosition = Vector3.zero;
             _currentWeaponInstance.transform.localRotation = weaponPrefab.transform.localRotation;
             _currentWeaponInstance.transform.localScale = weaponPrefab.transform.localScale;
+        }
+
+        private void RefreshSelectedWeaponInfo()
+        {
+            var weaponData = IsValidWeaponIndex(_currentIndex)
+                ? Weapons[_currentIndex]
+                : null;
+
+            if (_weaponNameLabel != null)
+            {
+                _weaponNameLabel.text = weaponData != null ? weaponData.DisplayName : string.Empty;
+            }
+
+            if (_weaponDescriptionLabel != null)
+            {
+                _weaponDescriptionLabel.text = weaponData != null ? weaponData.WeaponDescription : string.Empty;
+            }
+
+            if (_rarityLabel != null)
+            {
+                _rarityLabel.text = weaponData != null ? weaponData.RarityText : string.Empty;
+            }
+
+            if (_rarityBackground != null && weaponData != null)
+            {
+                _rarityBackground.color = weaponData.RarityColor;
+            }
+        }
+
+        private void RefreshCardSelection()
+        {
+            var currentWeaponData = IsValidWeaponIndex(_currentIndex)
+                ? Weapons[_currentIndex]
+                : null;
+
+            for (var i = 0; i < _cards.Count; i++)
+            {
+                if (_cards[i] != null)
+                {
+                    _cards[i].SetSelected(_cards[i].WeaponData == currentWeaponData);
+                }
+            }
+        }
+
+        private void OnCardClicked(WeaponCardUI card)
+        {
+            if (card == null)
+            {
+                return;
+            }
+
+            Show(card.WeaponData);
         }
 
         private void DestroyCurrentWeapon()
@@ -131,7 +199,7 @@ namespace TrashRush.Game
             _currentWeaponInstance = null;
         }
 
-        private bool TryFindValidIndex(int startIndex, int direction, out int validIndex)
+        private bool TryFindValidIndex(int startIndex, out int validIndex)
         {
             validIndex = -1;
 
@@ -140,23 +208,28 @@ namespace TrashRush.Game
                 return false;
             }
 
-            direction = direction >= 0 ? 1 : -1;
             var index = WrapIndex(startIndex);
 
             for (var i = 0; i < Weapons.Count; i++)
             {
-                var weaponData = Weapons[index];
-
-                if (weaponData != null && weaponData.WeaponPrefab != null)
+                if (IsValidWeaponIndex(index))
                 {
                     validIndex = index;
                     return true;
                 }
 
-                index = WrapIndex(index + direction);
+                index = WrapIndex(index + 1);
             }
 
             return false;
+        }
+
+        private bool IsValidWeaponIndex(int index)
+        {
+            return index >= 0 &&
+                   index < Weapons.Count &&
+                   Weapons[index] != null &&
+                   Weapons[index].WeaponPrefab != null;
         }
 
         private int WrapIndex(int index)
@@ -176,60 +249,32 @@ namespace TrashRush.Game
             return index;
         }
 
-        private void ResolveArrowButtons()
+        private void ResolveCardPrefabFromContainer()
         {
-            if (_weaponsPageRoot == null)
+            if (_weaponCardPrefab != null || _iapItemContainer == null)
             {
                 return;
             }
 
-            var buttons = _weaponsPageRoot.GetComponentsInChildren<Button>(true);
-
-            for (var i = 0; i < buttons.Length; i++)
-            {
-                var button = buttons[i];
-
-                if (button == null)
-                {
-                    continue;
-                }
-
-                if (_leftArrowButton == null && button.name == "LeftArrow")
-                {
-                    _leftArrowButton = button;
-                    continue;
-                }
-
-                if (_rightArrowButton == null && button.name == "RightArrow")
-                {
-                    _rightArrowButton = button;
-                }
-            }
+            _weaponCardPrefab = _iapItemContainer.GetComponentInChildren<WeaponCardUI>(true);
         }
 
-        private void RegisterArrowButtons()
+        private void ClearContainer()
         {
-            if (_leftArrowButton != null)
+            if (_iapItemContainer == null)
             {
-                _leftArrowButton.onClick.AddListener(ShowPrevious);
+                return;
             }
 
-            if (_rightArrowButton != null)
+            for (var i = _iapItemContainer.childCount - 1; i >= 0; i--)
             {
-                _rightArrowButton.onClick.AddListener(ShowNext);
-            }
-        }
+                var child = _iapItemContainer.GetChild(i);
 
-        private void UnregisterArrowButtons()
-        {
-            if (_leftArrowButton != null)
-            {
-                _leftArrowButton.onClick.RemoveListener(ShowPrevious);
-            }
-
-            if (_rightArrowButton != null)
-            {
-                _rightArrowButton.onClick.RemoveListener(ShowNext);
+                if (child != null)
+                {
+                    child.gameObject.SetActive(false);
+                    Destroy(child.gameObject);
+                }
             }
         }
     }
