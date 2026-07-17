@@ -2,6 +2,8 @@ using GameLift.UI.IapShop;
 using GameLift.UI.LevelPath;
 using GameLift.UI.MainMenu.NavigationBar;
 using GameLift.UI.SettingsPopup;
+using TrashRush.Game;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -9,8 +11,12 @@ namespace GameLift.UI.MainMenu
 {
     public class MainMenuLifetimeScope : LifetimeScope
     {
+        [SerializeField] private WeaponDatas _weaponDatas;
+
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.RegisterInstance(_weaponDatas);
+
             builder.RegisterComponentInHierarchy<NavigationBarController>();
             builder.RegisterComponentInHierarchy<IapShopUI>();
 
@@ -22,6 +28,8 @@ namespace GameLift.UI.MainMenu
             builder.RegisterComponentInHierarchy<SettingsButton>();
             builder.RegisterComponentInHierarchy<HomeUI>();
             builder.RegisterComponentInHierarchy<PlayButton>();
+            builder.RegisterComponentInHierarchy<Weapons>();
+            builder.RegisterComponentInHierarchy<WeaponRenderController>();
         }
     }
 }
