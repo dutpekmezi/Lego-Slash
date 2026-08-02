@@ -12,10 +12,9 @@ namespace TrashRush.Game
 
         private readonly Camera _camera;
         private readonly SlashManager _slashManager;
-        private readonly SlashDecalSpawner _slashDecalSpawner;
+        private readonly WeaponController _weaponController;
         private readonly SlashObjectService _slashObjectService;
         private readonly GamePauseService _pauseService;
-        private readonly ScoreSystem _scoreSystem;
         private readonly SlashConfig _config;
 
         private LeanFinger _activeFinger;
@@ -24,18 +23,16 @@ namespace TrashRush.Game
         public InputManager(
             Camera camera,
             SlashManager slashManager,
-            SlashDecalSpawner slashDecalSpawner,
+            WeaponController weaponController,
             SlashObjectService slashObjectService,
             GamePauseService pauseService,
-            ScoreSystem scoreSystem,
             SlashConfig config)
         {
             _camera = camera;
             _slashManager = slashManager;
-            _slashDecalSpawner = slashDecalSpawner;
+            _weaponController = weaponController;
             _slashObjectService = slashObjectService;
             _pauseService = pauseService;
-            _scoreSystem = scoreSystem;
             _config = config;
         }
 
@@ -99,23 +96,11 @@ namespace TrashRush.Game
                 return;
             }
 
-            _slashManager.Play(_startWorldPosition, endWorldPosition);
             var nextStreak = _slashManager.CurrentStreak + 1;
-
-            if (_slashDecalSpawner.TrySpawn(
-                    _startWorldPosition,
-                    endWorldPosition,
-                    nextStreak,
-                    out var slashObject))
-            {
-                var streak = _slashManager.RegisterHit();
-                _scoreSystem.RegisterSlash(streak);
-                _slashObjectService.TryRegisterSlash(slashObject);
-            }
-            else
-            {
-                _slashManager.RegisterMiss();
-            }
+            _weaponController.Slash(
+                _startWorldPosition,
+                endWorldPosition,
+                nextStreak);
         }
 
         private void OnObstacleHit(ObstacleObject obstacle)

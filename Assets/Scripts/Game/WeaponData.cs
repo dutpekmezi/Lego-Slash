@@ -30,6 +30,10 @@ namespace TrashRush.Game
         [SerializeField] private SpriteRenderer _backgroundSlashPrefab;
         [SerializeField] private Slash _slashPrefab;
         [SerializeField] private EffectBase _slashStreakEffect;
+        [Header("Hit Effect Scaling")]
+        [SerializeField] private bool _enableLeafWindScaling;
+        [SerializeField] private bool _enableObjectRotationScaling;
+        [SerializeField] private bool _enableScreenShakeScaling;
 
         public string DisplayName => string.IsNullOrWhiteSpace(Name) ? name : Name;
         public string WeaponDescription => Description;
@@ -44,5 +48,52 @@ namespace TrashRush.Game
         public SpriteRenderer BackgroundSlashPrefab => _backgroundSlashPrefab;
         public Slash SlashPrefab => _slashPrefab;
         public EffectBase SlashStreakEffect => _slashStreakEffect;
+        public bool EnableLeafWindScaling => _enableLeafWindScaling;
+        public bool EnableObjectRotationScaling => _enableObjectRotationScaling;
+        public bool EnableScreenShakeScaling => _enableScreenShakeScaling;
+
+        public LeafWindData ScaleLeafWindData(LeafWindData baseData, int streak)
+        {
+            return _enableLeafWindScaling
+                ? baseData.Scale(GetStreakScale(streak))
+                : baseData;
+        }
+
+        public float ScaleObjectRotation(float baseAngle, int streak)
+        {
+            return ScaleHitEffectValue(
+                baseAngle,
+                streak,
+                _enableObjectRotationScaling);
+        }
+
+        public float ScaleScreenShake(float baseStrength, float maxStrength, int streak)
+        {
+            var scaledStrength = ScaleHitEffectValue(
+                baseStrength,
+                streak,
+                _enableScreenShakeScaling);
+
+            return Mathf.Min(
+                scaledStrength,
+                Mathf.Max(Mathf.Max(0f, baseStrength), Mathf.Max(0f, maxStrength)));
+        }
+
+        private static float ScaleHitEffectValue(
+            float baseValue,
+            int streak,
+            bool enabled)
+        {
+            baseValue = Mathf.Max(0f, baseValue);
+
+            return enabled
+                ? baseValue * GetStreakScale(streak)
+                : baseValue;
+        }
+
+        private static float GetStreakScale(int streak)
+        {
+            return Mathf.Max(1, streak);
+        }
     }
 }

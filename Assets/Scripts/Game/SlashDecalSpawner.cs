@@ -21,6 +21,7 @@ namespace TrashRush.Game
         private readonly Camera _camera;
         private readonly IPools _pools;
         private readonly WeaponSystem _weaponSystem;
+        private readonly SlashManager _slashManager;
         private readonly SlashConfig _config;
         private readonly HitEffectConfig _hitEffectConfig;
         private readonly StreakConfig _streakConfig;
@@ -32,6 +33,7 @@ namespace TrashRush.Game
         private readonly int _hitSampleCount;
         private readonly Dictionary<Texture2D, Material> _decalMaterials = new();
         private readonly List<SpriteRenderer> _activeBackgroundSlashSprites = new();
+        private readonly List<WindSlashEffect> _activeWindSlashEffects = new();
 
         private Tween _screenShakeTween;
         private Vector3 _cameraStartLocalPosition;
@@ -41,6 +43,7 @@ namespace TrashRush.Game
             Camera camera,
             IPools pools,
             WeaponSystem weaponSystem,
+            SlashManager slashManager,
             SlashConfig config,
             HitEffectConfig hitEffectConfig,
             StreakConfig streakConfig,
@@ -54,6 +57,7 @@ namespace TrashRush.Game
             _camera = camera;
             _pools = pools;
             _weaponSystem = weaponSystem;
+            _slashManager = slashManager;
             _config = config;
             _hitEffectConfig = hitEffectConfig;
             _streakConfig = streakConfig;
@@ -66,6 +70,11 @@ namespace TrashRush.Game
             _cameraStartLocalPosition = _camera != null
                 ? _camera.transform.localPosition
                 : Vector3.zero;
+
+            if (_slashManager != null)
+            {
+                _slashManager.StreakChanged += OnStreakChanged;
+            }
 
             InitializeWeaponPools();
         }
@@ -197,7 +206,7 @@ namespace TrashRush.Game
                 endWorldPosition,
                 slashObject);
 
-            PlayHitEffect(slashObject.RotationTarget, hitRoot, delta, height, streak);
+            PlayHitEffect(slashObject, hitRoot, delta, height, streak);
             PlayScreenShake(streak);
             return true;
         }
@@ -205,6 +214,11 @@ namespace TrashRush.Game
         public void Dispose()
         {
             StopScreenShake();
+
+            if (_slashManager != null)
+            {
+                _slashManager.StreakChanged -= OnStreakChanged;
+            }
 
             foreach (var material in _decalMaterials.Values)
             {
@@ -216,6 +230,7 @@ namespace TrashRush.Game
 
             _decalMaterials.Clear();
             _activeBackgroundSlashSprites.Clear();
+            _activeWindSlashEffects.Clear();
         }
 
         private bool TryFindHit(
@@ -1087,22 +1102,89 @@ namespace TrashRush.Game
                 slashWorldPosition + worldOffset,
                 slashWorldRotation);
 
+            ApplyWindSlashStreak(effect, streak);
             effect.Play();
             _pools.Despawn(effect, _streakConfig.SlashStreakEffectLifetime);
         }
 
+        private void ApplyWindSlashStreak(EffectBase effect, int streak)
+        {
+            if (effect == null)
+            {
+                return;
+            }
+
+            var windSlashEffect = effect as WindSlashEffect;
+
+            if (windSlashEffect == null)
+            {
+                windSlashEffect = effect.GetComponent<WindSlashEffect>();
+            }
+
+            if (windSlashEffect == null)
+            {
+                return;
+            }
+
+            windSlashEffect.SetStreak(streak);
+            RegisterActiveWindSlashEffect(windSlashEffect);
+        }
+
+        private void RegisterActiveWindSlashEffect(WindSlashEffect windSlashEffect)
+        {
+            if (windSlashEffect == null)
+            {
+                return;
+            }
+
+            RemoveInactiveWindSlashEffects();
+
+            if (!_activeWindSlashEffects.Contains(windSlashEffect))
+            {
+                _activeWindSlashEffects.Add(windSlashEffect);
+            }
+        }
+
+        private void OnStreakChanged(int streak)
+        {
+            RemoveInactiveWindSlashEffects();
+
+            for (var i = 0; i < _activeWindSlashEffects.Count; i++)
+            {
+                if (_activeWindSlashEffects[i] != null)
+                {
+                    _activeWindSlashEffects[i].SetStreak(streak);
+                }
+            }
+        }
+
+        private void RemoveInactiveWindSlashEffects()
+        {
+            for (var i = _activeWindSlashEffects.Count - 1; i >= 0; i--)
+            {
+                if (_activeWindSlashEffects[i] == null ||
+                    !_activeWindSlashEffects[i].isActiveAndEnabled)
+                {
+                    _activeWindSlashEffects.RemoveAt(i);
+                }
+            }
+        }
+
         private void PlayHitEffect(
-            Transform rotationTarget,
+            SlashObject slashObject,
             Transform hitRoot,
             Vector3 slashDelta,
             float projectorHeight,
             int streak)
         {
+            var objectData = slashObject != null ? slashObject.Data : null;
+            var rotationTarget = slashObject != null ? slashObject.RotationTarget : null;
+
             if (rotationTarget == null ||
                 rotationTarget == hitRoot ||
-                _hitEffectConfig == null ||
-                !_hitEffectConfig.RotationEnabled ||
-                _hitEffectConfig.RotationDuration <= 0f)
+                objectData == null ||
+                !objectData.RotationEnabled ||
+                objectData.RotationDuration <= 0f)
             {
                 return;
             }
@@ -1115,14 +1197,17 @@ namespace TrashRush.Game
             }
 
             var worldRotationAxis = Vector3.Cross(slashDirection, _camera.transform.forward).normalized;
-            var rotationAngle =
-                GetHitRotationAngle(projectorHeight) *
-                (_streakConfig != null
-                    ? _streakConfig.GetRotationStrengthMultiplier(streak)
-                    : 1f);
+            var rotationAngle = GetHitRotationAngle(projectorHeight, objectData);
+            var weaponData = _weaponSystem?.CurrentWeapon;
+
+            if (weaponData != null)
+            {
+                rotationAngle = weaponData.ScaleObjectRotation(rotationAngle, streak);
+            }
+
             var appliedAngle = 0f;
             var rotationTween = DOVirtual
-                .Float(0f, rotationAngle, _hitEffectConfig.RotationDuration, angle =>
+                .Float(0f, rotationAngle, objectData.RotationDuration, angle =>
                 {
                     if (rotationTarget == null)
                     {
@@ -1133,10 +1218,10 @@ namespace TrashRush.Game
                     appliedAngle = angle;
                     rotationTarget.Rotate(worldRotationAxis, deltaAngle, Space.World);
                 })
-                .SetEase(_hitEffectConfig.RotationEase)
+                .SetEase(objectData.RotationEase)
                 .SetLink(rotationTarget.gameObject);
 
-            if (_hitEffectConfig.UseUnscaledTime)
+            if (_hitEffectConfig != null && _hitEffectConfig.UseUnscaledTime)
             {
                 rotationTween.SetUpdate(true);
             }
@@ -1152,12 +1237,16 @@ namespace TrashRush.Game
                 return;
             }
 
-            var strength = _streakConfig != null
-                ? _streakConfig.GetScreenShakeStrength(
-                    streak,
-                    _hitEffectConfig.ScreenShakeBaseStrength,
-                    _hitEffectConfig.ScreenShakeMaxStrength)
-                : _hitEffectConfig.ScreenShakeBaseStrength;
+            var strength = _hitEffectConfig.ScreenShakeBaseStrength;
+            var weaponData = _weaponSystem?.CurrentWeapon;
+
+            if (weaponData != null)
+            {
+                strength = weaponData.ScaleScreenShake(
+                    strength,
+                    _hitEffectConfig.ScreenShakeMaxStrength,
+                    streak);
+            }
 
             if (strength <= 0f)
             {
@@ -1205,7 +1294,7 @@ namespace TrashRush.Game
             _screenShakeTween = null;
         }
 
-        private float GetHitRotationAngle(float projectorHeight)
+        private float GetHitRotationAngle(float projectorHeight, SlashObjectData objectData)
         {
             var minHeight = _config != null ? Mathf.Max(0f, _config.DecalProjectorMinHeight) : 3f;
             var maxHeight = _config != null ? Mathf.Max(minHeight, _config.DecalProjectorMaxHeight) : 8f;
@@ -1214,8 +1303,8 @@ namespace TrashRush.Game
                 : 1f;
 
             return Mathf.Lerp(
-                _hitEffectConfig.MinRotationAngle,
-                _hitEffectConfig.MaxRotationAngle,
+                objectData.MinRotationAngle,
+                objectData.MaxRotationAngle,
                 heightProgress);
         }
 

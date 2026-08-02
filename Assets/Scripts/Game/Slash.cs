@@ -18,6 +18,7 @@ namespace TrashRush.Game
         private Vector3 _fullScale;
         private Vector3 _targetScale;
         private Renderer[] _renderers;
+        private WindSlashEffect[] _windSlashEffects;
         private Sequence _sequence;
         private Sequence _pulseSequence;
         private Action<ObstacleObject> _obstacleHit;
@@ -41,6 +42,7 @@ namespace TrashRush.Game
             _fullScale = _mesh.localScale;
             _targetScale = _fullScale;
             _renderers = _mesh.GetComponentsInChildren<Renderer>(true);
+            _windSlashEffects = GetComponentsInChildren<WindSlashEffect>(true);
             _mesh.localScale = Vector3.zero;
         }
 
@@ -75,6 +77,16 @@ namespace TrashRush.Game
             Action<Slash> completed,
             Action<ObstacleObject> obstacleHit = null)
         {
+            Play(startPosition, endPosition, 0, completed, obstacleHit);
+        }
+
+        public void Play(
+            Vector3 startPosition,
+            Vector3 endPosition,
+            int streak,
+            Action<Slash> completed,
+            Action<ObstacleObject> obstacleHit = null)
+        {
             var delta = endPosition - startPosition;
             delta.z = 0f;
 
@@ -94,7 +106,24 @@ namespace TrashRush.Game
             _obstacleHit = obstacleHit;
             _hitObstacleIds.Clear();
             _isPlaying = true;
+            SetStreak(streak);
             Play(position, Quaternion.Euler(0f, 0f, angle), _fullScale, completed);
+        }
+
+        public void SetStreak(int streak)
+        {
+            if (_windSlashEffects == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < _windSlashEffects.Length; i++)
+            {
+                if (_windSlashEffects[i] != null)
+                {
+                    _windSlashEffects[i].SetStreak(streak);
+                }
+            }
         }
 
         private void Play(Vector3 position, Quaternion rotation, Vector3 targetScale, Action<Slash> completed = null)

@@ -45,7 +45,7 @@ namespace TrashRush.Game
         public const string PopupIdConst = "weapons";
 
         private IReadOnlyList<WeaponData> WeaponItems =>
-            _weaponDatas != null ? _weaponDatas.Items : System.Array.Empty<WeaponData>();
+            _weaponDatas != null ? _weaponDatas.Weapons : System.Array.Empty<WeaponData>();
 
         public WeaponData SelectedWeapon =>
             IsValidWeaponIndex(_selectedIndex) ? WeaponItems[_selectedIndex] : null;

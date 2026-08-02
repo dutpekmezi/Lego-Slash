@@ -18,6 +18,11 @@ MonoBehaviour:
   _slashTexture: {fileID: 2800000, guid: 4212d8667288a854a8d3f24186d7bcc8, type: 3}
   _hitEffect: {fileID: 730000000000000001, guid: 27c05de32e5867d4f861553d84db29cc, type: 3}
   _totalSlash: 30
+  _rotationEnabled: 1
+  _rotationDuration: 4
+  _minRotationAngle: 20
+  _maxRotationAngle: 90
+  _rotationEase: 3
   _fallDuration: 18
   _fallEase: 1
   CellFractured: {fileID: 4680825175389086179, guid: 85f3298df4a80f643b24fd1d36cee1b7, type: 3}

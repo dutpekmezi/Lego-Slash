@@ -4852,7 +4852,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2641058397579003765}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 56c39e75832558a4698d0a02a562e262, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _includeChildren: 1
@@ -4862,3 +4862,6 @@ MonoBehaviour:
   _restartWithDelayEnabled: 0
   _restartDelay: 0.25
   _useUnscaledTime: 0
+  _noStreakShapeScaleY: 1
+  _shapeScaleYPerStreak: 0.2
+  _maxShapeScaleY: 8

@@ -5,7 +5,7 @@ namespace TrashRush.Game
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(ParticleSystem))]
-    public sealed class EffectBase : MonoBehaviour
+    public class EffectBase : MonoBehaviour
     {
         [SerializeField] private bool _includeChildren = true;
         [SerializeField] private bool _playOnEnable;
@@ -86,12 +86,12 @@ namespace TrashRush.Game
             }
         }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             CacheParticleSystems();
         }
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             CacheParticleSystems();
 
@@ -107,17 +107,17 @@ namespace TrashRush.Game
             }
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             StopRestartWithDelay();
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             StopRestartWithDelay();
         }
 
-        private void OnValidate()
+        protected virtual void OnValidate()
         {
             _restartDelay = Mathf.Max(0f, _restartDelay);
             CacheParticleSystems();

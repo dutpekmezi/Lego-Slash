@@ -12,6 +12,12 @@ namespace TrashRush.Game
         [SerializeField] private Texture2D _slashTexture;
         [SerializeField] private EffectBase _hitEffect;
         [SerializeField, Min(1)] private int _totalSlash = 1;
+        [Header("Object Rotation")]
+        [SerializeField] private bool _rotationEnabled = true;
+        [SerializeField, Min(0f)] private float _rotationDuration = 4f;
+        [SerializeField, Min(0f)] private float _minRotationAngle = 20f;
+        [SerializeField, Min(0f)] private float _maxRotationAngle = 90f;
+        [SerializeField] private Ease _rotationEase = Ease.OutSine;
         [Header("Fall")]
         [SerializeField, Min(0.01f)] private float _fallDuration = 9f;
         [SerializeField] private Ease _fallEase = Ease.Linear;
@@ -28,6 +34,11 @@ namespace TrashRush.Game
         public Texture2D SlashTexture => _slashTexture;
         public EffectBase HitEffect => _hitEffect;
         public int TotalSlash => Mathf.Max(1, _totalSlash);
+        public bool RotationEnabled => _rotationEnabled;
+        public float RotationDuration => Mathf.Max(0f, _rotationDuration);
+        public float MinRotationAngle => Mathf.Max(0f, _minRotationAngle);
+        public float MaxRotationAngle => Mathf.Max(MinRotationAngle, _maxRotationAngle);
+        public Ease RotationEase => _rotationEase;
         public float FallDuration => Mathf.Max(0.01f, _fallDuration);
         public Ease FallEase => _fallEase;
         public float CellFractureForce => Mathf.Max(0f, _cellFractureForce);

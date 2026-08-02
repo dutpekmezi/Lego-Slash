@@ -23,9 +23,6 @@ MonoBehaviour:
     _color: {r: 1, g: 0, b: 0.100666046, a: 1}
   _hitTextScaleIncreasePerStreak: 0.08
   _hitTextMaxScaleMultiplier: 2.5
-  _rotationStrengthIncreasePerStreak: 0.1
-  _maxRotationStrengthMultiplier: 1
-  _screenShakeStrengthPerStreak: 0.02
   _zoomEnabled: 1
   _zoomAmountPerHit: 0.1
   _zoomMaxAmount: 5

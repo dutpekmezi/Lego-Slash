@@ -31,11 +31,6 @@ namespace TrashRush.Game
         [SerializeField] private Vector2 _backgroundSlashScaleMultiplier = Vector2.one;
         [SerializeField] private Color _backgroundSlashColor = Color.white;
         [SerializeField] private int _backgroundSlashSortingOrderOffset = 1;
-        [Header("Leaf Slash Wind")]
-        [SerializeField, Min(0f)] private float _leafWindRadius = 3f;
-        [SerializeField, Min(0f)] private float _leafWindVelocityImpulse = 5f;
-        [SerializeField, Min(0f)] private float _leafWindMaxVelocity = 10f;
-
         public float ScaleTime => _scaleTime;
         public float HoldTime => _holdTime;
         public float DescaleTime => _descaleTime;
@@ -63,8 +58,5 @@ namespace TrashRush.Game
             Mathf.Max(0f, _backgroundSlashScaleMultiplier.y));
         public Color BackgroundSlashColor => _backgroundSlashColor;
         public int BackgroundSlashSortingOrderOffset => _backgroundSlashSortingOrderOffset;
-        public float LeafWindRadius => Mathf.Max(0f, _leafWindRadius);
-        public float LeafWindVelocityImpulse => Mathf.Max(0f, _leafWindVelocityImpulse);
-        public float LeafWindMaxVelocity => Mathf.Max(0f, _leafWindMaxVelocity);
     }
 }

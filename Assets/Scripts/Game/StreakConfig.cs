@@ -29,11 +29,6 @@ namespace TrashRush.Game
         [SerializeField, Min(0f)] private float _hitTextScaleIncreasePerStreak = 0.08f;
         [SerializeField, Min(1f)] private float _hitTextMaxScaleMultiplier = 2.5f;
 
-        [Header("Hit Effects")]
-        [SerializeField, Min(0f)] private float _rotationStrengthIncreasePerStreak = 0.08f;
-        [SerializeField, Min(1f)] private float _maxRotationStrengthMultiplier = 2.5f;
-        [SerializeField, Min(0f)] private float _screenShakeStrengthPerStreak = 0.02f;
-
         [Header("Camera Zoom")]
         [SerializeField] private bool _zoomEnabled = true;
         [SerializeField, Min(0f)] private float _zoomAmountPerHit = 0.08f;
@@ -109,21 +104,6 @@ namespace TrashRush.Game
             var multiplier =
                 1f + Mathf.Max(0, streak - 1) * Mathf.Max(0f, _hitTextScaleIncreasePerStreak);
             return Mathf.Min(multiplier, Mathf.Max(1f, _hitTextMaxScaleMultiplier));
-        }
-
-        public float GetRotationStrengthMultiplier(int streak)
-        {
-            var multiplier =
-                1f + Mathf.Max(0, streak - 1) * Mathf.Max(0f, _rotationStrengthIncreasePerStreak);
-            return Mathf.Min(multiplier, Mathf.Max(1f, _maxRotationStrengthMultiplier));
-        }
-
-        public float GetScreenShakeStrength(int streak, float baseStrength, float maxStrength)
-        {
-            var strength =
-                Mathf.Max(0f, baseStrength) +
-                Mathf.Max(0, streak - 1) * Mathf.Max(0f, _screenShakeStrengthPerStreak);
-            return Mathf.Min(strength, Mathf.Max(baseStrength, maxStrength));
         }
 
         public bool ShouldSpawnSlashStreakEffect(int streak)

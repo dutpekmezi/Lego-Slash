@@ -7,20 +7,23 @@ namespace TrashRush.Game
     public sealed class LeafSlashWindService : IStartable, IDisposable
     {
         private readonly SlashManager _slashManager;
+        private readonly WeaponSystem _weaponSystem;
+        private readonly HitEffectConfig _hitEffectConfig;
         private readonly EffectBase _fallingLeaves;
-        private readonly SlashConfig _config;
 
         private ParticleSystem.Particle[] _particles;
         private bool _started;
 
         public LeafSlashWindService(
             SlashManager slashManager,
-            EffectBase fallingLeaves,
-            SlashConfig config)
+            WeaponSystem weaponSystem,
+            HitEffectConfig hitEffectConfig,
+            EffectBase fallingLeaves)
         {
             _slashManager = slashManager;
+            _weaponSystem = weaponSystem;
+            _hitEffectConfig = hitEffectConfig;
             _fallingLeaves = fallingLeaves;
-            _config = config;
         }
 
         public void Start()
@@ -45,12 +48,20 @@ namespace TrashRush.Game
             _particles = null;
         }
 
-        private void OnSlashPlayed(Vector3 startPosition, Vector3 endPosition)
+        private void OnSlashPlayed(Vector3 startPosition, Vector3 endPosition, int streak)
         {
+            var leafWindData = _hitEffectConfig != null
+                ? _hitEffectConfig.LeafWindData
+                : LeafWindData.None;
+            var weaponData = _weaponSystem?.CurrentWeapon;
+
+            if (weaponData != null)
+            {
+                leafWindData = weaponData.ScaleLeafWindData(leafWindData, streak);
+            }
+
             if (_fallingLeaves == null ||
-                _config == null ||
-                _config.LeafWindRadius <= Mathf.Epsilon ||
-                _config.LeafWindVelocityImpulse <= Mathf.Epsilon)
+                !leafWindData.IsEnabled)
             {
                 return;
             }
@@ -82,7 +93,7 @@ namespace TrashRush.Game
             var main = particleSystem.main;
             var simulationTransform = GetSimulationTransform(main);
             var slashDirection = slashDelta.normalized;
-            var radius = _config.LeafWindRadius;
+            var radius = leafWindData.Radius;
             var radiusSquared = radius * radius;
             var changed = false;
 
@@ -114,8 +125,8 @@ namespace TrashRush.Game
                 var worldVelocity = simulationTransform != null
                     ? simulationTransform.TransformVector(particle.velocity)
                     : particle.velocity;
-                worldVelocity += slashDirection * (_config.LeafWindVelocityImpulse * falloff);
-                ClampPlanarVelocity(ref worldVelocity);
+                worldVelocity += slashDirection * (leafWindData.VelocityImpulse * falloff);
+                ClampPlanarVelocity(ref worldVelocity, leafWindData.MaxVelocity);
 
                 particle.velocity = simulationTransform != null
                     ? simulationTransform.InverseTransformVector(worldVelocity)
@@ -158,10 +169,8 @@ namespace TrashRush.Game
             }
         }
 
-        private void ClampPlanarVelocity(ref Vector3 velocity)
+        private void ClampPlanarVelocity(ref Vector3 velocity, float maxVelocity)
         {
-            var maxVelocity = _config.LeafWindMaxVelocity;
-
             if (maxVelocity <= Mathf.Epsilon)
             {
                 return;

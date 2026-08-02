@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Index>k__BackingField: 1
   _slashObjects:
-  - {fileID: 11400000, guid: e43f72c341d0ccc46953a8bf99bb8f16, type: 2}
-  - {fileID: 11400000, guid: e5ef5f56e62106f4c944a7992976fad3, type: 2}
+  - {fileID: 11400000, guid: 99f3fb28b76c82c4dbd4263d472bc713, type: 2}
+  - {fileID: 11400000, guid: 99f3fb28b76c82c4dbd4263d472bc713, type: 2}
   _obstacleObjects:
   - {fileID: 11400000, guid: 1d8a14602b3664147993ae47d94cf847, type: 2}
   - {fileID: 11400000, guid: 3d252644e6f4be040a4f851a79376d09, type: 2}

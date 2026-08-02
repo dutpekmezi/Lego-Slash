@@ -14,7 +14,7 @@ namespace TrashRush.Game
         public event Action<WeaponData> WeaponChanged;
 
         public IReadOnlyList<WeaponData> Weapons =>
-            _weaponDatas != null ? _weaponDatas.Items : EmptyWeapons;
+            _weaponDatas != null ? _weaponDatas.Weapons : EmptyWeapons;
 
         public WeaponData CurrentWeapon { get; private set; }
 
@@ -28,23 +28,9 @@ namespace TrashRush.Game
                 return;
             }
 
-            CurrentWeapon = FindFirstPurchasedWeapon();
+            CurrentWeapon = weaponDatas.DefaultWeapon;
 
-            if (CurrentWeapon != null)
-            {
-                return;
-            }
-
-            for (var i = 0; i < Weapons.Count; i++)
-            {
-                if (Weapons[i] == null)
-                {
-                    continue;
-                }
-
-                CurrentWeapon = Weapons[i];
-                break;
-            }
+            return;
         }
 
         public bool Equip(int index)

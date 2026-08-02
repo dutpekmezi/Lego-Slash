@@ -18,7 +18,7 @@ namespace TrashRush.Game
         private int _currentStreak;
 
         public event Action<int> StreakChanged;
-        public event Action<Vector3, Vector3> SlashPlayed;
+        public event Action<Vector3, Vector3, int> SlashPlayed;
         public event Action<ObstacleObject> ObstacleHit;
 
         public int CurrentStreak => _currentStreak;
@@ -62,11 +62,26 @@ namespace TrashRush.Game
             _parent = parent;
         }
 
-        public void Play(Vector3 startPosition, Vector3 endPosition)
+        public void Play(Vector3 startPosition, Vector3 endPosition, int streak = 0)
         {
-            SlashPlayed?.Invoke(startPosition, endPosition);
+            Play(
+                _weaponSystem?.CurrentWeapon,
+                startPosition,
+                endPosition,
+                streak);
+        }
 
-            var slashPrefab = _weaponSystem?.CurrentWeapon?.SlashPrefab;
+        public void Play(
+            WeaponData weaponData,
+            Vector3 startPosition,
+            Vector3 endPosition,
+            int streak = 0)
+        {
+            SlashPlayed?.Invoke(startPosition, endPosition, Mathf.Max(0, streak));
+
+            var slashPrefab = weaponData != null
+                ? weaponData.SlashPrefab
+                : null;
 
             if (slashPrefab == null)
             {
@@ -78,10 +93,12 @@ namespace TrashRush.Game
             position.z = Depth;
             slash.transform.position = position;
             slash.Construct(_slashConfig);
+            slash.SetStreak(streak);
             _activeSlashes.Add(slash);
             slash.Play(
                 startPosition,
                 endPosition,
+                streak,
                 OnSlashCompleted,
                 OnObstacleHit);
         }
@@ -89,6 +106,7 @@ namespace TrashRush.Game
         public int RegisterHit()
         {
             _currentStreak++;
+            SetActiveSlashStreak(_currentStreak);
             StreakChanged?.Invoke(_currentStreak);
             RestartStreakTimeout();
             return _currentStreak;
@@ -136,6 +154,7 @@ namespace TrashRush.Game
             }
 
             _currentStreak = 0;
+            SetActiveSlashStreak(_currentStreak);
             StreakChanged?.Invoke(_currentStreak);
         }
 
@@ -149,6 +168,7 @@ namespace TrashRush.Game
             }
 
             _currentStreak = 0;
+            SetActiveSlashStreak(_currentStreak);
             StreakChanged?.Invoke(_currentStreak);
         }
 
@@ -166,6 +186,20 @@ namespace TrashRush.Game
         {
             _activeSlashes.Remove(slash);
             DestroySlash(slash);
+        }
+
+        private void SetActiveSlashStreak(int streak)
+        {
+            for (var i = _activeSlashes.Count - 1; i >= 0; i--)
+            {
+                if (_activeSlashes[i] == null)
+                {
+                    _activeSlashes.RemoveAt(i);
+                    continue;
+                }
+
+                _activeSlashes[i].SetStreak(streak);
+            }
         }
 
         private void OnObstacleHit(ObstacleObject obstacle)

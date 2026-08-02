@@ -45,6 +45,7 @@ namespace TrashRush.Game
                 .WithParameter(_cameraRig)
                 .WithParameter(_streakConfig);
             builder.RegisterEntryPoint<LeafSlashWindService>(Lifetime.Singleton)
+                .WithParameter(_hitEffectConfig)
                 .WithParameter(_fallingLeaves);
             builder.RegisterEntryPoint<ScenePositionService>(Lifetime.Singleton)
                 .WithParameter(_background)
@@ -68,6 +69,7 @@ namespace TrashRush.Game
             builder.RegisterEntryPoint<StreakView>(Lifetime.Singleton)
                 .WithParameter(_streakLabel);
             builder.RegisterEntryPoint<SlashObjectService>(Lifetime.Singleton).AsSelf();
+            builder.RegisterEntryPoint<WeaponController>(Lifetime.Singleton).AsSelf();
             builder.RegisterEntryPoint<InputManager>(Lifetime.Singleton);
             builder.RegisterComponentInHierarchy<SettingsButton>();
             builder.RegisterEntryPoint<GamePauseService>(Lifetime.Singleton)

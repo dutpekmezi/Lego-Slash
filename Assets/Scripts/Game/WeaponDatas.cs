@@ -8,6 +8,9 @@ namespace TrashRush.Game
     {
         [SerializeField] private List<WeaponData> _weaponDatas = new();
 
-        public IReadOnlyList<WeaponData> Items => _weaponDatas;
+        [SerializeReference] private WeaponData _defaultWeaponData;
+
+        public IReadOnlyList<WeaponData> Weapons => _weaponDatas;
+        public WeaponData DefaultWeapon => _defaultWeaponData;
     }
 }

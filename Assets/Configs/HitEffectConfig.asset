@@ -12,15 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b21d4f9a5c574347a6a4b379f5071006, type: 3}
   m_Name: HitEffectConfig
   m_EditorClassIdentifier: 
-  _rotationEnabled: 1
-  _rotationDuration: 4
-  _minRotationAngle: 20
-  _maxRotationAngle: 90
-  _rotationEase: 3
   _screenShakeEnabled: 1
   _screenShakeDuration: 0.12
   _screenShakeBaseStrength: 0.06
   _screenShakeMaxStrength: 0.3
   _screenShakeVibrato: 1
   _screenShakeRandomness: 90
+  _leafWindRadius: 5
+  _leafWindVelocityImpulse: 6
+  _leafWindMaxVelocity: 20
   _useUnscaledTime: 0

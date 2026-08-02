@@ -36,6 +36,3 @@ MonoBehaviour:
   _backgroundSlashScaleMultiplier: {x: 1, y: 1}
   _backgroundSlashColor: {r: 1, g: 1, b: 1, a: 1}
   _backgroundSlashSortingOrderOffset: 1
-  _leafWindRadius: 5
-  _leafWindVelocityImpulse: 6
-  _leafWindMaxVelocity: 20
