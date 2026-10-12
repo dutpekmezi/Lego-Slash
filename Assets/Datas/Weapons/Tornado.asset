@@ -23,6 +23,8 @@ MonoBehaviour:
   _backgroundSlashPrefab: {fileID: 1884108055033370432, guid: 2cb89c3d2bd1d284c991227770652d46, type: 3}
   _slashPrefab: {fileID: 2400000000000004001, guid: 145cb2095e22ad94984bffee4f9531a2, type: 3}
   _slashStreakEffect: {fileID: 0}
+  _slashSounds:
+  - {fileID: 11400000, guid: 97642fb87f3a43044988b86548381122, type: 2}
   _enableLeafWindScaling: 1
   _enableObjectRotationScaling: 0
   _enableScreenShakeScaling: 0

@@ -18,3 +18,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3d59fccfb90524446b45986f8840f8f2, type: 2}
   - {fileID: 11400000, guid: 130ac54d88944dfbaae95d8e87db4c9a, type: 2}
   - {fileID: 11400000, guid: 45e9031f518f54e41ad578e04acf3e0b, type: 2}
+  _defaultWeaponData: {fileID: 11400000, guid: 9a49a773fa2d6014b9ab9091e561f66e, type: 2}

@@ -36,3 +36,11 @@ MonoBehaviour:
   _backgroundSlashScaleMultiplier: {x: 1, y: 1}
   _backgroundSlashColor: {r: 1, g: 1, b: 1, a: 1}
   _backgroundSlashSortingOrderOffset: 1
+  _splitHitBreakRatio: 0.2
+  _splitPushDamping: 4
+  _splitSeparationDistance: 0.3
+  _brickCutHalfWidth: 0.04
+  _brickLaunchSpeed: {x: 3, y: 6}
+  _brickLateralSpeed: 2
+  _brickSpinSpeed: 4
+  _brickLifetime: 5

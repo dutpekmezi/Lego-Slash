@@ -31,6 +31,25 @@ namespace TrashRush.Game
         [SerializeField] private Vector2 _backgroundSlashScaleMultiplier = Vector2.one;
         [SerializeField] private Color _backgroundSlashColor = Color.white;
         [SerializeField] private int _backgroundSlashSortingOrderOffset = 1;
+        [Header("Voxel LEGO")]
+        [SerializeField, Range(0f, 1f)] private float _splitHitBreakRatio = 0.2f;
+        [Tooltip("How quickly the split push slows down. Higher values stop it sooner.")]
+        [SerializeField, Min(0.1f)] private float _splitPushDamping = 4f;
+        public float SplitPushDamping => Mathf.Max(0.1f, _splitPushDamping);
+        [SerializeField, Min(0f)] private float _splitSeparationDistance = 0.3f;
+        public float SplitSeparationDistance => Mathf.Max(0f, _splitSeparationDistance);
+        public float SplitHitBreakRatio => Mathf.Clamp01(_splitHitBreakRatio);
+        [SerializeField, Min(0.001f)] private float _brickCutHalfWidth = 0.04f;
+        [SerializeField] private Vector2 _brickLaunchSpeed = new(3f, 6f);
+        [SerializeField, Min(0f)] private float _brickLateralSpeed = 2f;
+        [SerializeField, Min(0f)] private float _brickSpinSpeed = 4f;
+        [SerializeField, Min(0.1f)] private float _brickLifetime = 5f;
+        public float BrickCutHalfWidth => Mathf.Max(0.001f, _brickCutHalfWidth);
+        public Vector2 BrickLaunchSpeed => new(Mathf.Max(0.01f, _brickLaunchSpeed.x),
+            Mathf.Max(Mathf.Max(0.01f, _brickLaunchSpeed.x), _brickLaunchSpeed.y));
+        public float BrickLateralSpeed => Mathf.Max(0f, _brickLateralSpeed);
+        public float BrickSpinSpeed => Mathf.Max(0f, _brickSpinSpeed);
+        public float BrickLifetime => Mathf.Max(0.1f, _brickLifetime);
         public float ScaleTime => _scaleTime;
         public float HoldTime => _holdTime;
         public float DescaleTime => _descaleTime;

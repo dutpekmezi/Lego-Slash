@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Rusty Sword
   Description: Rusty and old sword
-  Id: hellfire
+  Id: default
   _cost: 0
   _weaponPrefab: {fileID: 5569527397346342452, guid: 5640124edf0f7f04f9ef8e48cf1b612f, type: 3}
   _weaponSprite: {fileID: 21300000, guid: 14a0bb0306d61fe41ad4e062e516a85b, type: 3}
@@ -23,6 +23,8 @@ MonoBehaviour:
   _backgroundSlashPrefab: {fileID: 7477197008149254262, guid: 8b9033816976ed04789fbefd5598f4ca, type: 3}
   _slashPrefab: {fileID: 2400000000000004001, guid: 22f997460cbfb0640ab803e988485035, type: 3}
   _slashStreakEffect: {fileID: 0}
+  _slashSounds:
+  - {fileID: 11400000, guid: 97642fb87f3a43044988b86548381122, type: 2}
   _enableLeafWindScaling: 0
   _enableObjectRotationScaling: 0
   _enableScreenShakeScaling: 0

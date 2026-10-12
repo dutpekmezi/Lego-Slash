@@ -649,7 +649,7 @@ MonoBehaviour:
   _slashHitSampleCount: 24
   _effectsRoot: {fileID: 722530230490118206}
   _background: {fileID: 5599658414484585766}
-  _fallingLeaves: {fileID: 730000000000000009}
+  _fallingLeaves: {fileID: 2566067537414489583}
 --- !u!114 &2400000000000005001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1372,16 +1372,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8724e4ea952122e4584fea954ed577a9, type: 3}
---- !u!198 &991702758507870973 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 2629758662996623120, guid: 8724e4ea952122e4584fea954ed577a9, type: 3}
-  m_PrefabInstance: {fileID: 3007837158981076461}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &730000000000000009 stripped
+--- !u!114 &2566067537414489583 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 730000000000000002, guid: 8724e4ea952122e4584fea954ed577a9, type: 3}
   m_PrefabInstance: {fileID: 3007837158981076461}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2e7c0cf96348b4a8dc4bf5d53de5c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7191849352144668363 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5364753712885351206, guid: 8724e4ea952122e4584fea954ed577a9, type: 3}

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GameLift.Save;
 using UnityEngine;
 
 namespace TrashRush.Game
@@ -10,6 +11,7 @@ namespace TrashRush.Game
             Array.Empty<WeaponData>();
 
         private readonly WeaponDatas _weaponDatas;
+        private readonly ISaveService _saveService;
 
         public event Action<WeaponData> WeaponChanged;
 
@@ -18,19 +20,23 @@ namespace TrashRush.Game
 
         public WeaponData CurrentWeapon { get; private set; }
 
-        public WeaponSystem(WeaponDatas weaponDatas)
+        public WeaponSystem(
+            WeaponDatas weaponDatas,
+            ISaveService saveService)
         {
             _weaponDatas = weaponDatas;
+            _saveService = saveService;
             CurrentWeapon = FindEquippedWeapon();
 
             if (CurrentWeapon != null)
             {
+                MarkPurchased(CurrentWeapon);
                 return;
             }
 
-            CurrentWeapon = weaponDatas.DefaultWeapon;
-
-            return;
+            CurrentWeapon = _weaponDatas != null
+                ? _weaponDatas.DefaultWeapon
+                : null;
         }
 
         public bool Equip(int index)
@@ -50,19 +56,50 @@ namespace TrashRush.Game
                 return false;
             }
 
+            var changed = CurrentWeapon != weapon;
             if (CurrentWeapon == weapon)
             {
+                SaveEquippedWeapon(weapon);
                 return true;
             }
 
             CurrentWeapon = weapon;
-            WeaponChanged?.Invoke(CurrentWeapon);
+            SaveEquippedWeapon(weapon);
+
+            if (changed)
+            {
+                WeaponChanged?.Invoke(CurrentWeapon);
+            }
+
             return true;
+        }
+
+        public bool IsEquipped(WeaponData weapon)
+        {
+            return weapon != null && CurrentWeapon == weapon;
+        }
+
+        public bool IsPurchased(WeaponData weapon)
+        {
+            return weapon != null &&
+                   (weapon.Cost <= 0 ||
+                    IsEquipped(weapon) ||
+                    LoadPurchased(weapon));
+        }
+
+        public void MarkPurchased(WeaponData weapon)
+        {
+            if (weapon == null || weapon.Cost <= 0)
+            {
+                return;
+            }
+
+            _saveService?.Raw.Save(GetPurchasedKey(weapon), true.ToString());
         }
 
         private WeaponData FindEquippedWeapon()
         {
-            var equippedWeaponId = PlayerPrefs.GetString(WeaponSaveKeys.EquippedWeapon, string.Empty);
+            var equippedWeaponId = _saveService?.Raw.LoadData(WeaponSaveKeys.EquippedWeapon);
 
             if (string.IsNullOrWhiteSpace(equippedWeaponId))
             {
@@ -74,8 +111,7 @@ namespace TrashRush.Game
                 var weapon = Weapons[i];
 
                 if (weapon != null &&
-                    weapon.SaveId == equippedWeaponId &&
-                    IsPurchased(weapon))
+                    weapon.SaveId == equippedWeaponId)
                 {
                     return weapon;
                 }
@@ -84,26 +120,10 @@ namespace TrashRush.Game
             return null;
         }
 
-        private WeaponData FindFirstPurchasedWeapon()
+        private bool LoadPurchased(WeaponData weapon)
         {
-            for (var i = 0; i < Weapons.Count; i++)
-            {
-                var weapon = Weapons[i];
-
-                if (weapon != null && IsPurchased(weapon))
-                {
-                    return weapon;
-                }
-            }
-
-            return null;
-        }
-
-        private bool IsPurchased(WeaponData weapon)
-        {
-            return weapon != null &&
-                   (weapon.Cost <= 0 ||
-                    PlayerPrefs.GetInt($"{WeaponSaveKeys.PurchasedWeaponPrefix}{weapon.SaveId}", 0) == 1);
+            return _saveService != null &&
+                   _saveService.Raw.LoadBool(GetPurchasedKey(weapon));
         }
 
         private bool Contains(WeaponData weapon)
@@ -117,6 +137,21 @@ namespace TrashRush.Game
             }
 
             return false;
+        }
+
+        private void SaveEquippedWeapon(WeaponData weapon)
+        {
+            if (weapon == null)
+            {
+                return;
+            }
+
+            _saveService?.Raw.Save(WeaponSaveKeys.EquippedWeapon, weapon.SaveId);
+        }
+
+        private static string GetPurchasedKey(WeaponData weapon)
+        {
+            return $"{WeaponSaveKeys.PurchasedWeaponPrefix}{weapon.SaveId}";
         }
     }
 }

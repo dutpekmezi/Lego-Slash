@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69a975772f04faf9ab0329ed38d4576, type: 3}
+  m_Name: Pumpkin
+  m_EditorClassIdentifier: 
+  _displayName: Pumpkin
+  _id: pumpkin
+  _prefab: {fileID: 2004593504503926662, guid: e560508a49d6057458a70436393a110d, type: 3}
+  _slashTexture: {fileID: 2800000, guid: cf4fb05ff235f244ea2e7ad80c349c2e, type: 3}
+  _hitEffect: {fileID: 730000000000000001, guid: 8ad710e5156c1c74a97d3e7686510de9, type: 3}
+  _hitSound: {fileID: 0}
+  _hardness: 1
+  _rotationEnabled: 1
+  _rotationDuration: 4
+  _minRotationAngle: 20
+  _maxRotationAngle: 90
+  _rotationEase: 3
+  _fallDuration: 8
+  _fallEase: 1
+  CellFractured: {fileID: 4680825175389086179, guid: 659cdc8e4993b704bb01bb86d5552912, type: 3}
+  _cellFractureForce: 20
+  _cellFractureDestroyDelay: 1
+  _cellFracturedDestroyDelay: 10

@@ -16,6 +16,7 @@ namespace GameLift.UI.MainMenu
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(_weaponDatas);
+            builder.Register<WeaponSystem>(Lifetime.Singleton);
 
             builder.RegisterComponentInHierarchy<NavigationBarController>();
             builder.RegisterComponentInHierarchy<IapShopUI>();

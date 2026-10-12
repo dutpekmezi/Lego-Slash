@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69a975772f04faf9ab0329ed38d4576, type: 3}
+  m_Name: Pineapple
+  m_EditorClassIdentifier: 
+  _displayName: Pineapple
+  _id: pineapple
+  _prefab: {fileID: 7959784353555749312, guid: e3111e0b6b95337429e00caf101b7fb2, type: 3}
+  _slashTexture: {fileID: 2800000, guid: 0e8f361d4fbf2804ea287431ec94c161, type: 3}
+  _hitEffect: {fileID: 730000000000000001, guid: ed14a4bc964505d478e310b311876be0, type: 3}
+  _hitSound: {fileID: 0}
+  _hardness: 0.05
+  _slashable: 1
+  _minSlashablePieceCount: 100
+  _splitPushForce: 4
+  _fragmentationForce: 2
+  _hitRotationForce: 1
+  _rotationEnabled: 1
+  _rotationDuration: 3
+  _minRotationAngle: 360
+  _maxRotationAngle: 720
+  _rotationEase: 3
+  _fallDuration: 30
+  _fallEase: 1
+  CellFractured: {fileID: 1035416748891357894, guid: 972314d6531eefd47aee3f410af0aa18, type: 3}
+  _cellFractureForce: 15
+  _cellFractureUpwardForce: 0.5
+  _cellFractureRandomForce: 0.25
+  _cellFractureTorqueForce: 0.5
+  _cellFractureDestroyDelay: 1
+  _cellFracturedDestroyDelay: 10

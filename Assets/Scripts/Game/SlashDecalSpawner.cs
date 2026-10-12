@@ -125,6 +125,12 @@ namespace TrashRush.Game
                 out _);
         }
 
+        public bool TrySlashBricks(Vector3 startWorldPosition, Vector3 endWorldPosition,
+            out SlashObject slashObject, List<SlashObject> hitObjects = null)
+        {
+            return VoxelBrickSlash.Launch(_camera, _config, startWorldPosition, endWorldPosition, out slashObject, hitObjects);
+        }
+
         public bool TrySpawn(
             Vector3 startWorldPosition,
             Vector3 endWorldPosition,
@@ -253,7 +259,7 @@ namespace TrashRush.Game
                 var t = i / (_hitSampleCount - 1f);
                 var screenPosition = Vector3.Lerp(startScreenPosition, endScreenPosition, t);
                 var ray = _camera.ScreenPointToRay(screenPosition);
-                var hits = Physics.RaycastAll(ray, _camera.farClipPlane, _hitLayerMask, QueryTriggerInteraction.Ignore);
+                var hits = Physics.RaycastAll(ray, _camera.farClipPlane, _hitLayerMask, QueryTriggerInteraction.Collide);
 
                 if (TryGetHit(
                         hits,
@@ -1177,54 +1183,7 @@ namespace TrashRush.Game
             float projectorHeight,
             int streak)
         {
-            var objectData = slashObject != null ? slashObject.Data : null;
-            var rotationTarget = slashObject != null ? slashObject.RotationTarget : null;
-
-            if (rotationTarget == null ||
-                rotationTarget == hitRoot ||
-                objectData == null ||
-                !objectData.RotationEnabled ||
-                objectData.RotationDuration <= 0f)
-            {
-                return;
-            }
-
-            var slashDirection = slashDelta.normalized;
-
-            if (slashDirection.sqrMagnitude <= Mathf.Epsilon)
-            {
-                return;
-            }
-
-            var worldRotationAxis = Vector3.Cross(slashDirection, _camera.transform.forward).normalized;
-            var rotationAngle = GetHitRotationAngle(projectorHeight, objectData);
-            var weaponData = _weaponSystem?.CurrentWeapon;
-
-            if (weaponData != null)
-            {
-                rotationAngle = weaponData.ScaleObjectRotation(rotationAngle, streak);
-            }
-
-            var appliedAngle = 0f;
-            var rotationTween = DOVirtual
-                .Float(0f, rotationAngle, objectData.RotationDuration, angle =>
-                {
-                    if (rotationTarget == null)
-                    {
-                        return;
-                    }
-
-                    var deltaAngle = angle - appliedAngle;
-                    appliedAngle = angle;
-                    rotationTarget.Rotate(worldRotationAxis, deltaAngle, Space.World);
-                })
-                .SetEase(objectData.RotationEase)
-                .SetLink(rotationTarget.gameObject);
-
-            if (_hitEffectConfig != null && _hitEffectConfig.UseUnscaledTime)
-            {
-                rotationTween.SetUpdate(true);
-            }
+            // SlashObject rotation is disabled, including hit rotation.
         }
 
         private void PlayScreenShake(int streak)

@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -239,6 +239,7 @@ MonoBehaviour:
   _pages:
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
   _startIndex: 1
 --- !u!1001 &799446283367794621
 PrefabInstance:
@@ -330,7 +331,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6322336731491263434, guid: 7cd096ce762f10e48a53379a27d2da7c, type: 3}
       propertyPath: m_Name
-      value: NavigationBarButton_Locked
+      value: NavigationBarButton_Weapons
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430316936665753165, guid: 7cd096ce762f10e48a53379a27d2da7c, type: 3}
+      propertyPath: m_Interactable
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -557,6 +562,18 @@ PrefabInstance:
     - target: {fileID: 7328131073423179066, guid: a014d71577f278a4d8c6a4de0456a989, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7918876360069277953, guid: a014d71577f278a4d8c6a4de0456a989, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7918876360069277953, guid: a014d71577f278a4d8c6a4de0456a989, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -45
+      objectReference: {fileID: 0}
+    - target: {fileID: 7918876360069277953, guid: a014d71577f278a4d8c6a4de0456a989, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 2.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

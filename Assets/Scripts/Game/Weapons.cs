@@ -37,6 +37,7 @@ namespace TrashRush.Game
         private ICurrencyService _currencyService;
         private IObjectResolver _resolver;
         private WeaponDatas _weaponDatas;
+        private WeaponSystem _weaponSystem;
         private WeaponRenderController _weaponRenderController;
         private int _selectedIndex = -1;
         private bool _isInitialized;
@@ -55,11 +56,13 @@ namespace TrashRush.Game
             ICurrencyService currencyService,
             IObjectResolver resolver,
             WeaponDatas weaponDatas,
+            WeaponSystem weaponSystem,
             WeaponRenderController weaponRenderController)
         {
             _currencyService = currencyService;
             _resolver = resolver;
             _weaponDatas = weaponDatas;
+            _weaponSystem = weaponSystem;
             _weaponRenderController = weaponRenderController;
 
             ResolveUiReferences();
@@ -176,8 +179,12 @@ namespace TrashRush.Game
                 return false;
             }
 
-            PlayerPrefs.SetString(WeaponSaveKeys.EquippedWeapon, weaponData.SaveId);
-            PlayerPrefs.Save();
+            if (_weaponSystem == null || !_weaponSystem.Equip(weaponData))
+            {
+                RefreshSelectedWeaponState();
+                return false;
+            }
+
             RefreshSelectedWeaponState();
             return true;
         }
@@ -199,15 +206,14 @@ namespace TrashRush.Game
 
         public bool IsPurchased(WeaponData weaponData)
         {
-            return weaponData != null &&
-                   (weaponData.Cost <= 0 ||
-                    PlayerPrefs.GetInt(GetPurchasedKey(weaponData), 0) == 1);
+            return _weaponSystem != null
+                ? _weaponSystem.IsPurchased(weaponData)
+                : weaponData != null && weaponData.Cost <= 0;
         }
 
         public bool IsEquipped(WeaponData weaponData)
         {
-            return weaponData != null &&
-                   PlayerPrefs.GetString(WeaponSaveKeys.EquippedWeapon, string.Empty) == weaponData.SaveId;
+            return _weaponSystem != null && _weaponSystem.IsEquipped(weaponData);
         }
 
         public bool CanBuy(WeaponData weaponData)
@@ -267,20 +273,14 @@ namespace TrashRush.Game
 
         private void ShowInitialWeapon()
         {
-            var equippedWeaponId = PlayerPrefs.GetString(WeaponSaveKeys.EquippedWeapon, string.Empty);
+            var equippedWeapon = _weaponSystem != null
+                ? _weaponSystem.CurrentWeapon
+                : null;
 
-            if (!string.IsNullOrWhiteSpace(equippedWeaponId))
+            if (equippedWeapon != null)
             {
-                for (var i = 0; i < WeaponItems.Count; i++)
-                {
-                    if (WeaponItems[i] != null &&
-                        WeaponItems[i].SaveId == equippedWeaponId &&
-                        IsPurchased(WeaponItems[i]))
-                    {
-                        Show(i);
-                        return;
-                    }
-                }
+                Show(equippedWeapon);
+                return;
             }
 
             Show(_startIndex);
@@ -290,6 +290,7 @@ namespace TrashRush.Game
         {
             var weaponData = SelectedWeapon;
             var isPurchased = IsPurchased(weaponData);
+            var showPurchaseVisual = weaponData != null && !isPurchased;
 
             RefreshSelectedWeaponInfo(weaponData);
             RefreshCardSelection(weaponData);
@@ -297,13 +298,11 @@ namespace TrashRush.Game
             if (_buyButton != null)
             {
                 _buyButton.gameObject.SetActive(weaponData != null);
-                _costGroup.SetActive(weaponData != null);
-                _buyButton.interactable = weaponData != null &&
-                                          !isPurchased &&
+                _buyButton.interactable = showPurchaseVisual &&
                                           CanBuy(weaponData);
             }
 
-            RefreshBuyButtonVisual(weaponData != null && !isPurchased);
+            RefreshBuyButtonVisual(showPurchaseVisual);
 
             if (_selectButton != null)
             {
@@ -419,7 +418,10 @@ namespace TrashRush.Game
                 _buyButtonImage.enabled = visible;
             }
 
-            _costGroup.SetActive(false);
+            if (_costGroup != null)
+            {
+                _costGroup.SetActive(visible);
+            }
         }
 
         private void InjectCloseButton()
@@ -470,18 +472,7 @@ namespace TrashRush.Game
 
         private void MarkPurchased(WeaponData weaponData)
         {
-            if (weaponData == null)
-            {
-                return;
-            }
-
-            PlayerPrefs.SetInt(GetPurchasedKey(weaponData), 1);
-            PlayerPrefs.Save();
-        }
-
-        private string GetPurchasedKey(WeaponData weaponData)
-        {
-            return $"{WeaponSaveKeys.PurchasedWeaponPrefix}{weaponData.SaveId}";
+            _weaponSystem?.MarkPurchased(weaponData);
         }
 
         private bool TryFindValidIndex(int startIndex, out int validIndex)

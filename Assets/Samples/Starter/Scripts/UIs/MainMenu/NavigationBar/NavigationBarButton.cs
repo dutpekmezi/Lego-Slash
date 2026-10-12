@@ -44,7 +44,7 @@ namespace GameLift.UI.MainMenu.NavigationBar
             DOTween.To(() => IconContainer.offsetMin, v => IconContainer.offsetMin = v, new Vector2(IconContainer.offsetMin.x, 85), .35f)
                 .SetId(this)
                 .SetLink(gameObject);
-            DOTween.To(() => IconContainer.offsetMax, v => IconContainer.offsetMax = v, new Vector2(IconContainer.offsetMax.x, 20), .35f)
+            DOTween.To(() => IconContainer.offsetMax, v => IconContainer.offsetMax = v, new Vector2(IconContainer.offsetMax.x, -10), .35f)
                 .SetId(this)
                 .SetLink(gameObject);
         }

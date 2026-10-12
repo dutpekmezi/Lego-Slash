@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69a975772f04faf9ab0329ed38d4576, type: 3}
+  m_Name: Apple
+  m_EditorClassIdentifier: 
+  _displayName: Apple
+  _id: apple
+  _prefab: {fileID: 129219405337658640, guid: 277a960b394243c47b1063362b08d3f1, type: 3}
+  _slashTexture: {fileID: 2800000, guid: fd4413f55cadb934ba1d91a22d83fc38, type: 3}
+  _hitEffect: {fileID: 0}
+  _hitSound: {fileID: 0}
+  _hardness: 1
+  _rotationEnabled: 1
+  _rotationDuration: 10
+  _minRotationAngle: 90
+  _maxRotationAngle: 360
+  _rotationEase: 3
+  _fallDuration: 3
+  _fallEase: 1
+  CellFractured: {fileID: 8575160623993716112, guid: 9060866b07b97a9429f5665b37c3f6eb, type: 3}
+  _cellFractureForce: 5
+  _cellFractureDestroyDelay: 1
+  _cellFracturedDestroyDelay: 10

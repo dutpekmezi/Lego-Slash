@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69a975772f04faf9ab0329ed38d4576, type: 3}
+  m_Name: melon
+  m_EditorClassIdentifier: 
+  _displayName: Melon
+  _id: melon
+  _prefab: {fileID: 4847228207255293205, guid: d069b53abfdfa0e49b21e525a859e4b2, type: 3}
+  _slashTexture: {fileID: 2800000, guid: 6e2109a6a5caab5469cfa4acc626e551, type: 3}
+  _hitEffect: {fileID: 730000000000000001, guid: 7222192d78144dd4b896f9e0ae581f77, type: 3}
+  _hitSound: {fileID: 0}
+  _hardness: 1
+  _rotationEnabled: 1
+  _rotationDuration: 10
+  _minRotationAngle: 90
+  _maxRotationAngle: 360
+  _rotationEase: 3
+  _fallDuration: 15
+  _fallEase: 1
+  CellFractured: {fileID: 5219762891252123592, guid: 4135693e187c3f54a836d713108aaf35, type: 3}
+  _cellFractureForce: 20
+  _cellFractureDestroyDelay: 1
+  _cellFracturedDestroyDelay: 10

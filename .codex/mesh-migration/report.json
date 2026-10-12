@@ -1,0 +1,341 @@
+{
+  "items": [
+    {
+      "name": "Apple",
+      "target": "Assets/Slash Objects/Apple/Prefabs/Apple.prefab",
+      "mesh": "Assets/Output/Apple_LowPoly.asset",
+      "meshGuid": "3a57db581b706724983c3aed5db11d05",
+      "primaryId": 1881652813208070801,
+      "extraIds": [],
+      "materials": [
+        "47ff6219c3dfbd14c82df2b3ac1199e3"
+      ],
+      "colliders": [
+        {
+          "id": 7943968838174326757,
+          "mesh": "Assets/Output/Apple_LowPoly_Collider_7943968838174326757.asset",
+          "meshGuid": "8bbffc6bc9967c54f904a88ae50342d0",
+          "kind": "MeshCollider",
+          "center": {
+            "x": -0.022593267261981964,
+            "y": 0.23412400484085083,
+            "z": -5.960464477539063e-08
+          },
+          "size": {
+            "x": 0.45996546745300293,
+            "y": 0.4782083034515381,
+            "z": 0.43767133355140686
+          },
+          "direction": 0
+        }
+      ],
+      "oldVertices": 473,
+      "newVertices": 369,
+      "triangles": 432,
+      "oldSize": {
+        "x": 0.4782083034515381,
+        "y": 0.4624590575695038,
+        "z": 0.4329676628112793
+      },
+      "newSize": {
+        "x": 0.45996546745300293,
+        "y": 0.4782083034515381,
+        "z": 0.43767133355140686
+      },
+      "localMesh": "Assets/Slash Objects/Apple/Meshes/Apple_LowPoly.asset"
+    },
+    {
+      "name": "Banana",
+      "target": "Assets/Slash Objects/Banana/Prefabs/Banana.prefab",
+      "mesh": "Assets/Output/Banana_LowPoly.asset",
+      "meshGuid": "be6168c0308335844b893a34b20121a6",
+      "primaryId": 5298737961681508244,
+      "extraIds": [],
+      "materials": [
+        "47ff6219c3dfbd14c82df2b3ac1199e3"
+      ],
+      "colliders": [
+        {
+          "id": 6807846727903902184,
+          "mesh": "Assets/Output/Banana_LowPoly_Collider_6807846727903902184.asset",
+          "meshGuid": "d346da336d4329c4ba86be4d2f97bccc",
+          "kind": "MeshCollider",
+          "center": {
+            "x": 0.00037416908890008926,
+            "y": -0.007890887558460236,
+            "z": 0.013570216484367847
+          },
+          "size": {
+            "x": 0.03478866070508957,
+            "y": 0.084202840924263,
+            "z": 0.07649252563714981
+          },
+          "direction": 0
+        }
+      ],
+      "oldVertices": 1541,
+      "newVertices": 1161,
+      "triangles": 1356,
+      "oldSize": {
+        "x": 0.022878170013427734,
+        "y": 0.084202840924263,
+        "z": 0.07971314340829849
+      },
+      "newSize": {
+        "x": 0.034788649529218674,
+        "y": 0.084202840924263,
+        "z": 0.07649251073598862
+      },
+      "localMesh": "Assets/Slash Objects/Banana/Meshes/Banana_LowPoly.asset"
+    },
+    {
+      "name": "Coconut",
+      "target": "Assets/Slash Objects/Coconut/Prefabs/Coconut.prefab",
+      "mesh": "Assets/Output/Coconut_LowPoly.asset",
+      "meshGuid": "0de7639c884fe8b43b6b4ce441b4c2db",
+      "primaryId": 6973550721171647663,
+      "extraIds": [],
+      "materials": [
+        "47ff6219c3dfbd14c82df2b3ac1199e3"
+      ],
+      "colliders": [
+        {
+          "id": 6087473631544403567,
+          "mesh": "",
+          "meshGuid": "",
+          "kind": "CapsuleCollider",
+          "center": {
+            "x": 5.8710575103759766e-05,
+            "y": 5.869567394256592e-05,
+            "z": 3.475509583950043e-05
+          },
+          "size": {
+            "x": 0.01868155598640442,
+            "y": 0.018512926995754242,
+            "z": 0.015236125327646732
+          },
+          "direction": 2
+        }
+      ],
+      "oldVertices": 1090621,
+      "newVertices": 708,
+      "triangles": 610,
+      "oldSize": {
+        "x": 0.018681557849049568,
+        "y": 0.01856261119246483,
+        "z": 0.018554825335741043
+      },
+      "newSize": {
+        "x": 0.018681557849049568,
+        "y": 0.018512926995754242,
+        "z": 0.015236127190291882
+      },
+      "localMesh": "Assets/Slash Objects/Coconut/Meshes/Coconut_LowPoly.asset"
+    },
+    {
+      "name": "Pineapple",
+      "target": "Assets/Slash Objects/Pineapple/Prefabs/Pineapple.prefab",
+      "mesh": "Assets/Output/Pineapple_LowPoly.asset",
+      "meshGuid": "cd653d3dee417194498b89c0bfda772d",
+      "primaryId": 1544153652957417673,
+      "extraIds": [
+        1078927635977205409
+      ],
+      "materials": [
+        "47ff6219c3dfbd14c82df2b3ac1199e3"
+      ],
+      "colliders": [
+        {
+          "id": 8511556505770199045,
+          "mesh": "Assets/Output/Pineapple_LowPoly_Collider_8511556505770199045.asset",
+          "meshGuid": "03c09826a56b35d4aba506df196d0b73",
+          "kind": "MeshCollider",
+          "center": {
+            "x": 3.2098032534122467e-06,
+            "y": -4.330417141318321e-06,
+            "z": 0.004083644598722458
+          },
+          "size": {
+            "x": 0.01566433534026146,
+            "y": 0.013747021555900574,
+            "z": 0.018593434244394302
+          },
+          "direction": 0
+        }
+      ],
+      "oldVertices": 335849,
+      "newVertices": 1548,
+      "triangles": 1340,
+      "oldSize": {
+        "x": 0.007837812416255474,
+        "y": 0.007836960256099701,
+        "z": 0.018593432381749153
+      },
+      "newSize": {
+        "x": 0.01566433161497116,
+        "y": 0.013747022487223148,
+        "z": 0.018593434244394302
+      },
+      "localMesh": "Assets/Slash Objects/Pineapple/Meshes/Pineapple_LowPoly.asset"
+    },
+    {
+      "name": "Watermelon",
+      "target": "Assets/Slash Objects/Watermelon/Prefabs/Watermelon.prefab",
+      "mesh": "Assets/Output/Watermelon_LowPoly.asset",
+      "meshGuid": "e19b4b5e25a8a174590a9a29687dedf4",
+      "primaryId": 2246064946842195197,
+      "extraIds": [],
+      "materials": [
+        "47ff6219c3dfbd14c82df2b3ac1199e3"
+      ],
+      "colliders": [
+        {
+          "id": 8416348405892073367,
+          "mesh": "Assets/Output/Watermelon_LowPoly_Collider_8416348405892073367.asset",
+          "meshGuid": "f8e428b69a7b8994da1657550d9695a7",
+          "kind": "MeshCollider",
+          "center": {
+            "x": -3.725290298461914e-09,
+            "y": 3.725290298461914e-09,
+            "z": 0.0
+          },
+          "size": {
+            "x": 0.019596051424741745,
+            "y": 0.018385520204901695,
+            "z": 0.026478148996829987
+          },
+          "direction": 0
+        }
+      ],
+      "oldVertices": 4046,
+      "newVertices": 705,
+      "triangles": 720,
+      "oldSize": {
+        "x": 0.022019237279891968,
+        "y": 0.022019244730472565,
+        "z": 0.026478148996829987
+      },
+      "newSize": {
+        "x": 0.019596051424741745,
+        "y": 0.018385520204901695,
+        "z": 0.026478148996829987
+      },
+      "localMesh": "Assets/Slash Objects/Watermelon/Meshes/Watermelon_LowPoly.asset"
+    },
+    {
+      "name": "Pumpkin",
+      "target": "Assets/Slash Objects/Pumpkin/Prefabs/Pumpkin.prefab",
+      "mesh": "Assets/Output/Pumpkin_LowPoly.asset",
+      "meshGuid": "bb6ac93b104c9de4bbfba0c0aae7e7eb",
+      "primaryId": 3075171317131238563,
+      "extraIds": [],
+      "materials": [
+        "33e53089655962a439d2cccd8853a2e4",
+        "3fce648a3eec601439fdcdab54929696"
+      ],
+      "colliders": [
+        {
+          "id": 5226699948441530707,
+          "mesh": "Assets/Output/Pumpkin_LowPoly_Collider_5226699948441530707.asset",
+          "meshGuid": "7ae6814f3edf7c342a8cd9839205c54d",
+          "kind": "MeshCollider",
+          "center": {
+            "x": 9.475275874137878e-06,
+            "y": 8.600298315286636e-06,
+            "z": -1.1259689927101135e-05
+          },
+          "size": {
+            "x": 0.018912840634584427,
+            "y": 0.017465587705373764,
+            "z": 0.01728462241590023
+          },
+          "direction": 0
+        }
+      ],
+      "oldVertices": 380165,
+      "newVertices": 624,
+      "triangles": 926,
+      "oldSize": {
+        "x": 0.018832029774785042,
+        "y": 0.018912838771939278,
+        "z": 0.018397880718111992
+      },
+      "newSize": {
+        "x": 0.018912838771939278,
+        "y": 0.017465587705373764,
+        "z": 0.01728462055325508
+      },
+      "localMesh": "Assets/Slash Objects/Pumpkin/Meshes/Pumpkin_LowPoly.asset"
+    },
+    {
+      "name": "Tomato",
+      "target": "Assets/Slash Objects/Tomato/Prefabs/Lemon.prefab",
+      "mesh": "Assets/Output/Tomato_LowPoly.asset",
+      "meshGuid": "f3f178574a3e8c748abfd89200e3207b",
+      "primaryId": 6973550721171647663,
+      "extraIds": [],
+      "materials": [
+        "6d73b8dcbf518214196866ab33ceade6",
+        "a14d011ae93b8f348bb995bebb356bab",
+        "6d73b8dcbf518214196866ab33ceade6"
+      ],
+      "colliders": [
+        {
+          "id": 6087473631544403567,
+          "mesh": "",
+          "meshGuid": "",
+          "kind": "CapsuleCollider",
+          "center": {
+            "x": -2.2357795387506485e-05,
+            "y": 0.0,
+            "z": -0.00015110010281205177
+          },
+          "size": {
+            "x": 0.00853641889989376,
+            "y": 0.010323399677872658,
+            "z": 0.008975722827017307
+          },
+          "direction": 2
+        }
+      ],
+      "oldVertices": 592,
+      "newVertices": 787,
+      "triangles": 878,
+      "oldSize": {
+        "x": 0.007421972695738077,
+        "y": 0.007421972695738077,
+        "z": 0.010323399677872658
+      },
+      "newSize": {
+        "x": 0.00853641889989376,
+        "y": 0.010323399677872658,
+        "z": 0.008975722827017307
+      },
+      "localMesh": "Assets/Slash Objects/Tomato/Meshes/Tomato_LowPoly.asset"
+    }
+  ],
+  "deleted": [
+    "Assets\\Slash Objects\\Apple\\Meshes\\Apple_Whole_Green_01.fbx",
+    "Assets\\Slash Objects\\Apple\\Meshes\\Meshy_AI_realistic_apple_gree_0813143223_texture.fbx",
+    "Assets\\Slash Objects\\Banana\\Meshes\\banana.fbx",
+    "Assets\\Slash Objects\\Coconut\\Meshes\\Meshy_AI_Coconut_0817203200_texture.fbx",
+    "Assets\\Slash Objects\\Pineapple\\Meshes\\Pineapple_Fruit_Main.fbx",
+    "Assets\\Slash Objects\\Pumpkin\\Meshes\\Meshy_AI_Midnight_Jack_o_Lant_0808195312_texture.fbx",
+    "Assets\\Slash Objects\\Tomato\\Meshes\\Vege-Tomato.fbx",
+    "Assets\\Slash Objects\\Watermelon\\Meshes\\watermelon_green.fbx"
+  ],
+  "retainedReferenced": [
+    {
+      "mesh": "Assets\\Slash Objects\\Pineapple\\Meshes\\Pineapple_Leaf_Main.fbx",
+      "users": [
+        "Assets\\Slash Objects\\Pineapple\\Cell Fractured Prefabs\\Pineapple_cell_fractured.prefab"
+      ]
+    }
+  ],
+  "verification": "7 prefabs: meshes, submeshes, materials and mesh colliders verified with Unity 6000.0.72f1.",
+  "backupPath": "C:\\Users\\Atilla\\AppData\\Local\\Temp\\TrashRushLowPolyMigration\\OriginalAssets",
+  "relocated": [
+    "Assets/Model Packages/DearMousey/Stylized Fruits Props/Models/Apple_Whole_Green_01.fbx",
+    "Assets/Model Packages/FastMesh/Meshs/Vegetable/Vege-Tomato.fbx"
+  ]
+}

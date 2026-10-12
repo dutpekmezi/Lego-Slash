@@ -15,6 +15,9 @@ namespace TrashRush.Game
         [SerializeField] private Vector3 _axisWeights = Vector3.one;
         [SerializeField] private Ease _rotationEase = Ease.InOutSine;
         [SerializeField] private bool _useUnscaledTime;
+        [Tooltip("Maximum contact push between divided objects. 0 disables mutual pushing.")]
+        [SerializeField, Range(0f, 10f)] private float _dividedObjectPushForce = 0f;
+        public float DividedObjectPushForce => Mathf.Clamp(_dividedObjectPushForce, 0f, 10f);
 
         public bool RotationEnabled => _rotationEnabled;
         public float MinRotationDuration => Mathf.Max(0.01f, _minRotationDuration);

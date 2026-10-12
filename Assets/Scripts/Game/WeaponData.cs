@@ -1,3 +1,5 @@
+using GameLift.Audio;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TrashRush.Game
@@ -30,6 +32,9 @@ namespace TrashRush.Game
         [SerializeField] private SpriteRenderer _backgroundSlashPrefab;
         [SerializeField] private Slash _slashPrefab;
         [SerializeField] private EffectBase _slashStreakEffect;
+
+        [SerializeField] private List<SoundData> _slashSounds;
+
         [Header("Hit Effect Scaling")]
         [SerializeField] private bool _enableLeafWindScaling;
         [SerializeField] private bool _enableObjectRotationScaling;
@@ -48,6 +53,7 @@ namespace TrashRush.Game
         public SpriteRenderer BackgroundSlashPrefab => _backgroundSlashPrefab;
         public Slash SlashPrefab => _slashPrefab;
         public EffectBase SlashStreakEffect => _slashStreakEffect;
+        public List<SoundData> SlashSound => _slashSounds;
         public bool EnableLeafWindScaling => _enableLeafWindScaling;
         public bool EnableObjectRotationScaling => _enableObjectRotationScaling;
         public bool EnableScreenShakeScaling => _enableScreenShakeScaling;
@@ -94,6 +100,13 @@ namespace TrashRush.Game
         private static float GetStreakScale(int streak)
         {
             return Mathf.Max(1, streak);
+        }
+
+        public SoundData GetRandomSlashSound()
+        {
+            int randomIndex = UnityEngine.Random.Range(0, _slashSounds.Count);
+
+            return _slashSounds[randomIndex];
         }
     }
 }

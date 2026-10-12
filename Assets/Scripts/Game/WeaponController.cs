@@ -1,4 +1,6 @@
+using GameLift.Audio;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -11,7 +13,7 @@ namespace TrashRush.Game
         private readonly SlashDecalSpawner _slashDecalSpawner;
         private readonly SlashObjectService _slashObjectService;
         private readonly ScoreSystem _scoreSystem;
-
+        private readonly IAudioService _audioService;
         private bool _started;
 
         public WeaponController(
@@ -19,13 +21,15 @@ namespace TrashRush.Game
             SlashManager slashManager,
             SlashDecalSpawner slashDecalSpawner,
             SlashObjectService slashObjectService,
-            ScoreSystem scoreSystem)
+            ScoreSystem scoreSystem,
+            IAudioService audioService)
         {
             _weaponSystem = weaponSystem;
             _slashManager = slashManager;
             _slashDecalSpawner = slashDecalSpawner;
             _slashObjectService = slashObjectService;
             _scoreSystem = scoreSystem;
+            this._audioService = audioService;
         }
 
         public void Start()
@@ -41,7 +45,8 @@ namespace TrashRush.Game
         public bool Slash(
             Vector3 startWorldPosition,
             Vector3 endWorldPosition,
-            int streak)
+            int streak,
+            Vector2? screenSlashDirection = null)
         {
             if (!_started ||
                 _weaponSystem?.CurrentWeapon == null ||
@@ -58,16 +63,30 @@ namespace TrashRush.Game
                 endWorldPosition,
                 streak);
 
-            if (_slashDecalSpawner != null &&
-                _slashDecalSpawner.TrySpawn(
+            SlashObject slashObject = null;
+            bool decalHit = _slashDecalSpawner != null && _slashDecalSpawner.TrySpawn(
                     startWorldPosition,
                     endWorldPosition,
                     streak,
-                    out var slashObject))
+                    out slashObject);
+            // Resolve decals first while the cells still belong to their model.
+            // Release cells before progress completion can destroy the original mesh.
+            SlashObject brickOwner = null;
+            var hitObjects = new List<SlashObject>();
+            bool brickHit = _slashDecalSpawner != null && _slashDecalSpawner.TrySlashBricks(
+                startWorldPosition, endWorldPosition, out brickOwner, hitObjects);
+            if (slashObject == null) slashObject = brickOwner;
+            if (decalHit || brickHit)
             {
                 var registeredStreak = _slashManager.RegisterHit();
                 _scoreSystem?.RegisterSlash(registeredStreak);
-                _slashObjectService?.TryRegisterSlash(slashObject);
+                if (slashObject != null && !hitObjects.Contains(slashObject)) hitObjects.Add(slashObject);
+                _slashObjectService?.TryRegisterSlashes(
+                    hitObjects, startWorldPosition, endWorldPosition, screenSlashDirection);
+
+                var _weaponData = _weaponSystem.CurrentWeapon;
+                _audioService.Play(weaponData.GetRandomSlashSound());
+
                 return true;
             }
 

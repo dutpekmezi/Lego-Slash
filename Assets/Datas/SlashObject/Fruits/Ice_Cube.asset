@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69a975772f04faf9ab0329ed38d4576, type: 3}
+  m_Name: Ice_Cube
+  m_EditorClassIdentifier: 
+  _displayName: Ice Cube
+  _id: ice_cube
+  _prefab: {fileID: 2872107178672183556, guid: ceee840c14f19374db1777aa591a24a0, type: 3}
+  _slashTexture: {fileID: 2800000, guid: a9e51b78f0022a4458fcb853da7637d7, type: 3}
+  _hitEffect: {fileID: 730000000000000001, guid: 42574e58cbb15fd47bf9922707ae2b89, type: 3}
+  _hitSound: {fileID: 0}
+  _hardness: 1
+  _rotationEnabled: 1
+  _rotationDuration: 10
+  _minRotationAngle: 90
+  _maxRotationAngle: 360
+  _rotationEase: 3
+  _fallDuration: 15
+  _fallEase: 1
+  CellFractured: {fileID: 352275237403219243, guid: 45fe0457758af3a408e50e2ae6c6d27c, type: 3}
+  _cellFractureForce: 15
+  _cellFractureDestroyDelay: 1
+  _cellFracturedDestroyDelay: 10

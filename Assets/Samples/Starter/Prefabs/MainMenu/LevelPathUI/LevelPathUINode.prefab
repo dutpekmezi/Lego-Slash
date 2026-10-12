@@ -261,7 +261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0.1764706, g: 0.41568628, b: 0.30980393, a: 1}
+  m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
   m_EffectDistance: {x: 3, y: -3}
   m_UseGraphicAlpha: 1
 --- !u!1 &6071273280902087915
@@ -368,5 +368,5 @@ MonoBehaviour:
   ease: 0
   _background: {fileID: 2713959184663814516}
   _levelText: {fileID: 9138206930957460004}
-  _nextLevelFillColor: {r: 0.1764706, g: 0.41568628, b: 0.30980393, a: 1}
+  _nextLevelFillColor: {r: 0.007843138, g: 0.5411765, b: 0, a: 1}
   _nextLevelTextColor: {r: 1, g: 1, b: 1, a: 1}

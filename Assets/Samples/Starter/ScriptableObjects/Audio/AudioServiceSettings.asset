@@ -14,4 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sounds:
   - {fileID: 11400000, guid: 07f304ce68e44104c94e565875063896, type: 2}
+  - {fileID: 11400000, guid: a4241a4ac03a5e5408610a4077600ea4, type: 2}
+  - {fileID: 11400000, guid: 97642fb87f3a43044988b86548381122, type: 2}
+  - {fileID: 11400000, guid: 514b0e813d2bf944781cb46f906d1f21, type: 2}
+  - {fileID: 11400000, guid: b37cbdb75cd24ef49b0f465bb77571f8, type: 2}
+  - {fileID: 11400000, guid: 1264b367646e762438844aa61a80318c, type: 2}
+  - {fileID: 11400000, guid: 10c42933e75a1404a9d800c632f4634a, type: 2}
   sfxPoolSize: 10

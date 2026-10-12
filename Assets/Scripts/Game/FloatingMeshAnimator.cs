@@ -11,6 +11,7 @@ namespace TrashRush.Game
         private Tween _rotationTween;
         private Quaternion _startLocalRotation;
         private bool _hasStartLocalRotation;
+        public FloatingConfig Config => _floatingConfig;
 
         private void Awake()
         {
@@ -51,8 +52,16 @@ namespace TrashRush.Game
             StopRotation(false);
         }
 
+        public void Resume()
+        {
+            StopRotation(false);
+            CaptureStartRotation();
+            StartRotation();
+        }
+
         private void StartRotation()
         {
+            if (GetComponentInParent<SlashObject>() != null) return;
             if (_mesh == null ||
                 _floatingConfig == null ||
                 !_floatingConfig.RotationEnabled)
@@ -65,6 +74,7 @@ namespace TrashRush.Game
 
         private void QueueNextRotation(float delay)
         {
+            if (GetComponentInParent<SlashObject>() != null) return;
             if (!isActiveAndEnabled ||
                 _mesh == null ||
                 _floatingConfig == null ||

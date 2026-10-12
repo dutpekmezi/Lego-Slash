@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21b1d4c75ad847219da038aebbbe271d, type: 3}
+  m_Name: Level8
+  m_EditorClassIdentifier: 
+  <Index>k__BackingField: 0
+  _slashObjects:
+  - {fileID: 11400000, guid: 14bb7080ed7560c4498a46af03089203, type: 2}
+  - {fileID: 11400000, guid: 36f50b1af1d7f8b4ebb7f77cdcb2cfa7, type: 2}
+  - {fileID: 11400000, guid: 7949946b61a95e143add164135bfa46f, type: 2}
+  - {fileID: 11400000, guid: 0fee3b7149ea9bd48bdd290518ffb1f3, type: 2}
+  - {fileID: 11400000, guid: e5ef5f56e62106f4c944a7992976fad3, type: 2}
+  - {fileID: 11400000, guid: 07052fab26e5d354a815f81f82b1840f, type: 2}
+  - {fileID: 11400000, guid: 0269fcab2925bca42924573a985dd048, type: 2}
+  - {fileID: 11400000, guid: d96a842d6ee860a4c94073d81c82b158, type: 2}
+  _obstacleObjects:
+  - {fileID: 11400000, guid: 1d8a14602b3664147993ae47d94cf847, type: 2}
+  - {fileID: 11400000, guid: 3d252644e6f4be040a4f851a79376d09, type: 2}
+  _obstacleSpawnInterval: 3
+  _obstaclesPerSpawn: 1
+  _maxObstacleSpawnCount: 100

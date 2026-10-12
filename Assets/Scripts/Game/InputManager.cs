@@ -100,7 +100,8 @@ namespace TrashRush.Game
             _weaponController.Slash(
                 _startWorldPosition,
                 endWorldPosition,
-                nextStreak);
+                nextStreak,
+                finger.ScreenPosition - finger.StartScreenPosition);
         }
 
         private void OnObstacleHit(ObstacleObject obstacle)

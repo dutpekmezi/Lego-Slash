@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69a975772f04faf9ab0329ed38d4576, type: 3}
+  m_Name: Football
+  m_EditorClassIdentifier: 
+  _displayName: Football
+  _id: football
+  _prefab: {fileID: 2434324786038150291, guid: a1d7997215205fd40aa6850f9addc46e, type: 3}
+  _slashTexture: {fileID: 2800000, guid: 6fc4dfdf3877fc1478453d720b100c59, type: 3}
+  _hitEffect: {fileID: 730000000000000001, guid: ffd957ed4f521244880a9d657db58ead, type: 3}
+  _hitSound: {fileID: 0}
+  _hardness: 1
+  _rotationEnabled: 1
+  _rotationDuration: 10
+  _minRotationAngle: 90
+  _maxRotationAngle: 360
+  _rotationEase: 3
+  _fallDuration: 5
+  _fallEase: 1
+  CellFractured: {fileID: 3235518863588924301, guid: f0d186458fa7402438054f2e046dbb29, type: 3}
+  _cellFractureForce: 80
+  _cellFractureDestroyDelay: 1
+  _cellFracturedDestroyDelay: 5
