@@ -29,3 +29,75 @@ MonoBehaviour:
       m_EditorAssetChanged: 0
     <IsLoopable>k__BackingField: 1
     <Difficulty>k__BackingField: 0
+  - <Level>k__BackingField:
+      m_AssetGUID: 1b7cdfc0473a7194c8bc8baf0c499279
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    <IsLoopable>k__BackingField: 1
+    <Difficulty>k__BackingField: 0
+  - <Level>k__BackingField:
+      m_AssetGUID: 2926b4d404935da4d829621465cff810
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    <IsLoopable>k__BackingField: 1
+    <Difficulty>k__BackingField: 0
+  - <Level>k__BackingField:
+      m_AssetGUID: 2ede0593a6cfce140b604e5fa3083751
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    <IsLoopable>k__BackingField: 1
+    <Difficulty>k__BackingField: 0
+  - <Level>k__BackingField:
+      m_AssetGUID: 40759c1cf93f4fe4f97199c1df178155
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    <IsLoopable>k__BackingField: 1
+    <Difficulty>k__BackingField: 0
+  - <Level>k__BackingField:
+      m_AssetGUID: 61d0afcc7d428e147b1b5391fe793c47
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    <IsLoopable>k__BackingField: 1
+    <Difficulty>k__BackingField: 0
+  - <Level>k__BackingField:
+      m_AssetGUID: 74e7489c8bf36c945b1ef044db81d28d
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    <IsLoopable>k__BackingField: 1
+    <Difficulty>k__BackingField: 0
+  - <Level>k__BackingField:
+      m_AssetGUID: 27bc3dc1529309d4681863733f1d4d47
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    <IsLoopable>k__BackingField: 1
+    <Difficulty>k__BackingField: 0
+  - <Level>k__BackingField:
+      m_AssetGUID: 05d9f3008daf9474699ff8c51e67ea39
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    <IsLoopable>k__BackingField: 1
+    <Difficulty>k__BackingField: 0
+  - <Level>k__BackingField:
+      m_AssetGUID: 9c90767559454214aaeb48ba0975e5be
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 1
+    <IsLoopable>k__BackingField: 1
+    <Difficulty>k__BackingField: 0

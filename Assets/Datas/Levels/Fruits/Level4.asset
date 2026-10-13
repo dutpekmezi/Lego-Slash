@@ -15,8 +15,8 @@ MonoBehaviour:
   <Index>k__BackingField: 0
   _slashObjects:
   - {fileID: 11400000, guid: 14bb7080ed7560c4498a46af03089203, type: 2}
-  - {fileID: 11400000, guid: 36f50b1af1d7f8b4ebb7f77cdcb2cfa7, type: 2}
   - {fileID: 11400000, guid: 7949946b61a95e143add164135bfa46f, type: 2}
+  - {fileID: 11400000, guid: 36f50b1af1d7f8b4ebb7f77cdcb2cfa7, type: 2}
   - {fileID: 11400000, guid: 0fee3b7149ea9bd48bdd290518ffb1f3, type: 2}
   _obstacleObjects:
   - {fileID: 11400000, guid: 1d8a14602b3664147993ae47d94cf847, type: 2}
