@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -8,102 +7,215 @@ namespace TrashRush.EditorTools
     // Single-model VOX files, as exported by Goxel. No Unity/native dependencies.
     internal static class VoxBrickReader
     {
-        internal readonly struct Cell
-        {
-            public readonly byte X, Y, Z, Color;
-            public Cell(byte x, byte y, byte z, byte color)
-            { X = x; Y = y; Z = z; Color = color; }
-            public int Key => X | (Y << 8) | (Z << 16);
-        }
-
-        internal sealed class Model
-        {
-            public int Width, Depth, Height;
-            public Cell[] Cells;
-            // Palette index zero means empty. Index one is the first RGBA entry.
-            public readonly byte[][] Palette = new byte[256][];
-        }
-
         public static Model Read(string path)
         {
             using (var stream = File.OpenRead(path))
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
             {
-                if (stream.Length < 20 || Encoding.ASCII.GetString(reader.ReadBytes(4)) != "VOX ")
-                    throw new InvalidDataException("Geçerli bir MagicaVoxel .vox dosyası değil.");
-                var version = reader.ReadInt32();
-                if (version != 150 && version != 200)
-                    throw new InvalidDataException($"Desteklenmeyen VOX sürümü: {version}.");
-                if (Encoding.ASCII.GetString(reader.ReadBytes(4)) != "MAIN")
-                    throw new InvalidDataException("VOX MAIN bölümü bulunamadı.");
-                int mainBytes = reader.ReadInt32(), childBytes = reader.ReadInt32();
-                if (mainBytes != 0 || childBytes < 0 || 20L + childBytes != stream.Length)
-                    throw new InvalidDataException("VOX dosyasının bölüm uzunlukları geçersiz.");
+                ValidateFileHeader(reader);
 
                 var model = new Model();
-                bool hasSize = false, hasPalette = false;
+                bool hasSize = false;
+                bool hasPalette = false;
+
                 while (stream.Position < stream.Length)
                 {
-                    if (stream.Length - stream.Position < 12)
-                        throw new InvalidDataException("Eksik VOX bölüm başlığı.");
-                    string tag = Encoding.ASCII.GetString(reader.ReadBytes(4));
-                    int bytes = reader.ReadInt32(), children = reader.ReadInt32();
-                    long end = stream.Position + bytes;
-                    if (bytes < 0 || children < 0 || end + children > stream.Length)
-                        throw new InvalidDataException("Eksik veya bozuk VOX bölümü.");
-                    // Goxel's single-volume export has no nested chunks.
-                    if (children != 0)
-                        throw new InvalidDataException("İç içe modeller desteklenmiyor. Goxel'den tek model dışa aktar.");
-                    switch (tag)
+                    string chunkId = ReadChunkHeader(reader, out int contentSize, out long contentEnd);
+
+                    switch (chunkId)
                     {
                         case "PACK":
-                            if (bytes != 4 || reader.ReadInt32() != 1)
-                                throw new InvalidDataException("Birden fazla VOX modeli desteklenmiyor. Tek model dışa aktar.");
+                            if (contentSize != 4 || reader.ReadInt32() != 1)
+                            {
+                                throw new InvalidDataException("Multiple VOX models are not supported. Export a single model.");
+                            }
+
                             break;
+
                         case "SIZE":
-                            if (hasSize || bytes != 12)
-                                throw new InvalidDataException("Tek bir SIZE bölümü bekleniyor.");
-                            model.Width = reader.ReadInt32();
-                            model.Depth = reader.ReadInt32();
-                            model.Height = reader.ReadInt32();
-                            if (model.Width < 1 || model.Width > 256 || model.Depth < 1 || model.Depth > 256 || model.Height < 1 || model.Height > 256)
-                                throw new InvalidDataException("VOX boyutları 1–256 aralığında olmalı.");
+                            ReadDimensions(reader, model, contentSize, hasSize);
                             hasSize = true;
                             break;
+
                         case "XYZI":
-                            if (!hasSize || model.Cells != null || bytes < 4)
-                                throw new InvalidDataException("Tek model için SIZE ve XYZI bölümleri bekleniyor.");
-                            int count = reader.ReadInt32();
-                            if (count < 1 || 4L + count * 4L != bytes || count > model.Width * model.Depth * model.Height)
-                                throw new InvalidDataException("VOX hücre sayısı geçersiz.");
-                            model.Cells = new Cell[count];
-                            var occupied = new HashSet<int>();
-                            for (int i = 0; i < count; i++)
-                            {
-                                var cell = new Cell(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
-                                if (cell.Color == 0 || cell.X >= model.Width || cell.Y >= model.Depth || cell.Z >= model.Height || !occupied.Add(cell.Key))
-                                    throw new InvalidDataException("Geçersiz veya tekrar eden VOX hücresi.");
-                                model.Cells[i] = cell;
-                            }
+                            ReadCells(reader, model, contentSize, hasSize);
                             break;
+
                         case "RGBA":
-                            if (bytes != 1024 || hasPalette)
-                                throw new InvalidDataException("VOX renk paleti geçersiz.");
-                            for (int i = 1; i < 256; i++) model.Palette[i] = reader.ReadBytes(4);
-                            reader.ReadBytes(4); // Last entry is reserved, not color index 256.
+                            ReadPalette(reader, model, contentSize, hasPalette);
                             hasPalette = true;
                             break;
+
                         case "nTRN":
                         case "nGRP":
                         case "nSHP":
-                            throw new InvalidDataException("VOX sahne dönüşümleri desteklenmiyor. Goxel'den tek hacim olarak dışa aktar.");
+                            throw new InvalidDataException("VOX scene transforms are not supported. Export a single volume from Goxel.");
                     }
-                    stream.Position = end;
+
+                    stream.Position = contentEnd;
                 }
+
                 if (model.Cells == null || !hasPalette)
-                    throw new InvalidDataException("Model veya RGBA paleti eksik. Goxel'den Magica Voxel formatında dışa aktar.");
+                {
+                    throw new InvalidDataException("The model or RGBA palette is missing. Export in MagicaVoxel format from Goxel.");
+                }
+
                 return model;
             }
+        }
+
+        private static void ValidateFileHeader(BinaryReader reader)
+        {
+            Stream stream = reader.BaseStream;
+
+            if (stream.Length < 20 || Encoding.ASCII.GetString(reader.ReadBytes(4)) != "VOX ")
+            {
+                throw new InvalidDataException("The file is not a valid MagicaVoxel .vox file.");
+            }
+
+            int version = reader.ReadInt32();
+
+            if (version != 150 && version != 200)
+            {
+                throw new InvalidDataException($"Unsupported VOX version: {version}.");
+            }
+
+            if (Encoding.ASCII.GetString(reader.ReadBytes(4)) != "MAIN")
+            {
+                throw new InvalidDataException("The VOX MAIN chunk is missing.");
+            }
+
+            int mainContentSize = reader.ReadInt32();
+            int mainChildrenSize = reader.ReadInt32();
+
+            if (mainContentSize != 0 || mainChildrenSize < 0 || 20L + mainChildrenSize != stream.Length)
+            {
+                throw new InvalidDataException("The VOX chunk lengths are invalid.");
+            }
+        }
+
+        private static string ReadChunkHeader(BinaryReader reader, out int contentSize, out long contentEnd)
+        {
+            Stream stream = reader.BaseStream;
+
+            if (stream.Length - stream.Position < 12)
+            {
+                throw new InvalidDataException("The VOX chunk header is incomplete.");
+            }
+
+            string chunkId = Encoding.ASCII.GetString(reader.ReadBytes(4));
+            contentSize = reader.ReadInt32();
+            int childrenSize = reader.ReadInt32();
+            contentEnd = stream.Position + contentSize;
+
+            if (contentSize < 0 || childrenSize < 0 || contentEnd + childrenSize > stream.Length)
+            {
+                throw new InvalidDataException("The VOX chunk is incomplete or corrupted.");
+            }
+
+            // Goxel's single-volume export has no nested chunks.
+            if (childrenSize != 0)
+            {
+                throw new InvalidDataException("Nested chunks are not supported. Export a single model from Goxel.");
+            }
+
+            return chunkId;
+        }
+
+        private static void ReadDimensions(BinaryReader reader, Model model, int contentSize, bool hasSize)
+        {
+            if (hasSize || contentSize != 12)
+            {
+                throw new InvalidDataException("Exactly one SIZE chunk is required.");
+            }
+
+            model.Width = reader.ReadInt32();
+            model.Depth = reader.ReadInt32();
+            model.Height = reader.ReadInt32();
+
+            if (!IsValidDimension(model.Width) || !IsValidDimension(model.Depth) || !IsValidDimension(model.Height))
+            {
+                throw new InvalidDataException("VOX dimensions must be between 1 and 256.");
+            }
+        }
+
+        private static bool IsValidDimension(int dimension)
+        {
+            return dimension >= 1 && dimension <= 256;
+        }
+
+        private static void ReadCells(BinaryReader reader, Model model, int contentSize, bool hasSize)
+        {
+            if (!hasSize || model.Cells != null || contentSize < 4)
+            {
+                throw new InvalidDataException("A single SIZE chunk followed by a single XYZI chunk is required.");
+            }
+
+            int cellCount = reader.ReadInt32();
+
+            if (cellCount < 1 || 4L + cellCount * 4L != contentSize || cellCount > model.Width * model.Depth * model.Height)
+            {
+                throw new InvalidDataException("The VOX cell count is invalid.");
+            }
+
+            model.Cells = new Cell[cellCount];
+            var occupiedPositions = new HashSet<int>();
+
+            for (int index = 0; index < cellCount; index++)
+            {
+                var cell = new Cell(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+
+                if (cell.Color == 0 || cell.X >= model.Width || cell.Y >= model.Depth || cell.Z >= model.Height || !occupiedPositions.Add(cell.Key))
+                {
+                    throw new InvalidDataException("The VOX model contains an invalid or duplicate cell.");
+                }
+
+                model.Cells[index] = cell;
+            }
+        }
+
+        private static void ReadPalette(BinaryReader reader, Model model, int contentSize, bool hasPalette)
+        {
+            if (contentSize != 1024 || hasPalette)
+            {
+                throw new InvalidDataException("The VOX color palette is invalid.");
+            }
+
+            for (int index = 1; index < 256; index++)
+            {
+                model.Palette[index] = reader.ReadBytes(4);
+            }
+
+            reader.ReadBytes(4); // Last entry is reserved, not color index 256.
+        }
+
+        internal readonly struct Cell
+        {
+            public readonly byte X;
+            public readonly byte Y;
+            public readonly byte Z;
+            public readonly byte Color;
+
+            public Cell(byte x, byte y, byte z, byte color)
+            {
+                X = x;
+                Y = y;
+                Z = z;
+                Color = color;
+            }
+
+            public int Key => X | (Y << 8) | (Z << 16);
+        }
+
+        internal sealed class Model
+        {
+            public int Width;
+            public int Depth;
+            public int Height;
+            public Cell[] Cells;
+
+            // Palette index zero means empty. Index one is the first RGBA entry.
+            public readonly byte[][] Palette = new byte[256][];
         }
     }
 }
