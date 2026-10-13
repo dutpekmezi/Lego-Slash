@@ -18,7 +18,13 @@ MonoBehaviour:
   _slashTexture: {fileID: 2800000, guid: 6e2109a6a5caab5469cfa4acc626e551, type: 3}
   _hitEffect: {fileID: 730000000000000001, guid: 7222192d78144dd4b896f9e0ae581f77, type: 3}
   _hitSound: {fileID: 0}
-  _hardness: 1
+  _hardness: 0.5
+  _slashable: 0
+  _minSlashablePieceCount: 10
+  _explodeCount: 80
+  _splitPushForce: 0.6
+  _fragmentationForce: 5
+  _hitRotationForce: 1
   _rotationEnabled: 1
   _rotationDuration: 10
   _minRotationAngle: 90
@@ -28,5 +34,8 @@ MonoBehaviour:
   _fallEase: 1
   CellFractured: {fileID: 5219762891252123592, guid: 4135693e187c3f54a836d713108aaf35, type: 3}
   _cellFractureForce: 20
+  _cellFractureUpwardForce: 0.5
+  _cellFractureRandomForce: 0.25
+  _cellFractureTorqueForce: 0.5
   _cellFractureDestroyDelay: 1
   _cellFracturedDestroyDelay: 10

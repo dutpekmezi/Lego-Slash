@@ -20,6 +20,8 @@ namespace TrashRush.Game
         [SerializeField] private bool _slashable;
         [Tooltip("Minimum brick count for a new slashable half. Smaller halves are released as debris.")]
         [SerializeField, Min(1)] private int _minSlashablePieceCount = 10;
+        [Tooltip("Explode when fewer than this many voxel bricks remain. Lower values delay the explosion.")]
+        [SerializeField, Min(1)] private int _explodeCount = 3;
         [Tooltip("Opposite push perpendicular to the cut for both split modes. 0 disables the push.")]
         [SerializeField, Range(0f, 10f)] private float _splitPushForce = 0.6f;
         [Tooltip("0 releases bricks under gravity only. Higher values increase random XY and world -Z launch speed.")]
@@ -56,6 +58,7 @@ namespace TrashRush.Game
         public float Hardness => Mathf.Clamp(_hardness, 0f, 10f);
         public bool Slashable => _slashable;
         public int MinSlashablePieceCount => Mathf.Max(1, _minSlashablePieceCount);
+        public int ExplodeCount => Mathf.Max(1, _explodeCount);
         public float SplitPushForce => Mathf.Clamp(_splitPushForce, 0f, 10f);
         public float FragmentationForce => Mathf.Clamp(_fragmentationForce, 0f, 10f);
         public float BrickReleaseRatio => Hardness <= 1f ? 1f : (10f - Hardness) / (9f * Hardness);

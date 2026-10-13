@@ -155,8 +155,7 @@ namespace TrashRush.Game
 
             _currentSlash++;
             completed = _completedCut || (_usesVoxelBricks
-                ? (_splitMinimum > 0 ? RemainingBrickCount() < _splitMinimum :
-                    RemainingBrickCount() * 3L < _initialBricks.Length)
+                ? RemainingBrickCount() < _data.ExplodeCount
                 : _data.Hardness < 10f);
 
             if (completed)
@@ -194,10 +193,6 @@ namespace TrashRush.Game
 
         internal bool CanSplit(SlashConfig config)
         {
-            // Split-enabled models must reach the split threshold before the old
-            // one-third cleanup rule can prematurely resolve the whole model.
-            if (_data != null && _data.Slashable)
-                _splitMinimum = _data.MinSlashablePieceCount;
             return IsSlashable && _usesVoxelBricks && _data.Slashable &&
                 _data.Prefab != null;
         }

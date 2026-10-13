@@ -21,6 +21,7 @@ MonoBehaviour:
   _hardness: 0
   _slashable: 1
   _minSlashablePieceCount: 20
+  _explodeCount: 3
   _splitPushForce: 3
   _fragmentationForce: 2.5
   _hitRotationForce: 1
